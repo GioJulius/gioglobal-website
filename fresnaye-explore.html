@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fresnaye Showstopper — Explore Every Room | Gio Global</title>
+<meta name="description" content="Free-roam room explorer for the R100m Fresnaye listing. Drag to look, click to glide, walk every room." />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --accent: #00d2ff; --gold: #d4af6a; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: 'Inter', sans-serif; background: #07080f; color: #fff; }
+  #scene { position: fixed; inset: 0; z-index: 0; cursor: grab; }
+  #scene.dragging { cursor: grabbing; }
+
+  .hud {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 24px; pointer-events: none;
+  }
+  .hud > * { pointer-events: auto; }
+  .logo { font-family: 'Space Grotesk'; font-weight: 700; letter-spacing: .5px; }
+  .logo span { color: var(--accent); }
+  .logo small { font-size: .65rem; color: #9aa1c0; font-weight: 400; letter-spacing: 2px; display: block; }
+  .cta {
+    text-decoration: none; color: #fff; font-size: .82rem; font-weight: 600;
+    padding: 10px 18px; border-radius: 99px;
+    background: linear-gradient(90deg, #6c5ce7, #00d2ff);
+  }
+
+  /* Room menu / map */
+  .rooms {
+    position: fixed; left: 18px; top: 50%; transform: translateY(-50%); z-index: 5;
+    background: rgba(10,12,22,.72); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.1); border-radius: 16px;
+    padding: 14px 10px; max-height: 76vh; overflow-y: auto; width: 178px;
+  }
+  .rooms .fl { color: var(--gold); font-size: .6rem; letter-spacing: 2px; text-transform: uppercase; padding: 8px 8px 4px; }
+  .rooms button {
+    display: block; width: 100%; text-align: left; background: none; border: none;
+    color: #b9c0d8; font-family: 'Inter'; font-size: .82rem; padding: 7px 9px;
+    border-radius: 9px; cursor: pointer; transition: all .2s;
+  }
+  .rooms button:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .rooms button.active { background: linear-gradient(90deg, rgba(108,92,231,.35), rgba(0,210,255,.25)); color: #fff; }
+  .rooms button .n { color: var(--accent); font-size: .68rem; margin-right: 6px; }
+
+  /* Current room title */
+  .roomtitle {
+    position: fixed; bottom: 78px; left: 50%; transform: translateX(-50%);
+    z-index: 4; text-align: center; pointer-events: none; text-shadow: 0 2px 14px rgba(0,0,0,.7);
+    transition: opacity .4s;
+  }
+  .roomtitle .k { color: var(--gold); letter-spacing: 3px; font-size: .66rem; text-transform: uppercase; }
+  .roomtitle h2 { font-family: 'Space Grotesk'; font-size: clamp(1.3rem, 3vw, 2rem); }
+
+  /* Controls hint + arrows */
+  .controls {
+    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 5;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .controls .hint {
+    color: #9aa1c0; font-size: .68rem; letter-spacing: 1.4px; text-transform: uppercase;
+    background: rgba(10,12,22,.6); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.09); padding: 9px 16px; border-radius: 99px;
+  }
+  .controls button {
+    background: rgba(10,12,22,.7); color: #fff; border: 1px solid rgba(255,255,255,.14);
+    width: 40px; height: 40px; border-radius: 50%; font-size: 1rem; cursor: pointer;
+  }
+  .controls button:hover { border-color: var(--accent); color: var(--accent); }
+
+  .disclaimer {
+    position: fixed; bottom: 8px; right: 10px; z-index: 5;
+    font-size: .56rem; color: rgba(255,255,255,.45); max-width: 360px; text-align: right;
+  }
+  .disclaimer a { color: rgba(255,255,255,.65); }
+
+  /* Loading */
+  #loader {
+    position: fixed; inset: 0; z-index: 20; background: #07080f;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    transition: opacity .6s;
+  }
+  #loader.done { opacity: 0; pointer-events: none; }
+  #loader .t { font-family: 'Space Grotesk'; font-size: 1.1rem; letter-spacing: 1px; }
+  #loader .bar { width: 220px; height: 3px; background: rgba(255,255,255,.12); border-radius: 99px; overflow: hidden; }
+  #loader .bar i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), var(--accent)); }
+
+  @media (max-width: 760px) {
+    .rooms { left: 8px; width: 148px; padding: 10px 6px; }
+    .rooms button { font-size: .74rem; }
+    .disclaimer { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="t">FRESNAYE SHOWSTOPPER</div><div class="bar"><i id="lbar"></i></div><div style="color:#9aa1c0;font-size:.7rem;letter-spacing:2px">LOADING ROOMS</div></div>
+
+<div class="hud">
+  <div class="logo">GIO<span>GLOBAL</span><small>ROOM EXPLORER · R 100,000,000 · FRESNAYE</small></div>
+  <a class="cta" href="mailto:gioglobalmgmt@gmail.com?subject=Room explorer for my listing">Want this for your listings?</a>
+</div>
+
+<div class="rooms" id="roomMenu"></div>
+
+<div class="roomtitle" id="roomTitle"><div class="k">—</div><h2>—</h2></div>
+
+<div class="controls">
+  <button id="prevBtn" title="Previous room">←</button>
+  <div class="hint">Drag to look · Click a room to glide · W A S D to walk free</div>
+  <button id="nextBtn" title="Next room">→</button>
+</div>
+
+<div class="disclaimer">
+  Unofficial concept by Gio Global using photos from the public
+  <a href="https://www.remaxliving.co.za/fresnaye-house-for-sale-2496805" target="_blank" rel="noopener">RE/MAX Living listing</a>
+  (Ref 2496805). Not affiliated with RE/MAX.
+</div>
+
+<canvas id="scene"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  // ================= STATIONS =================
+  // Ground floor ring + upper floor ring. Photos = fs-room-XX.jpg
+  const S = [
+    { name: 'Arrival',          floor: 'Ground Floor', pos: [0, 0, 16],    photos: [19] },
+    { name: 'Living Room',      floor: 'Ground Floor', pos: [11, 0, 11],   photos: [24, 23] },
+    { name: 'Dining',           floor: 'Ground Floor', pos: [16, 0, 0],    photos: [25] },
+    { name: 'Kitchen',          floor: 'Ground Floor', pos: [11, 0, -11],  photos: [16] },
+    { name: 'Covered Terrace',  floor: 'Ground Floor', pos: [0, 0, -16],   photos: [20, 10] },
+    { name: 'Pool & Deck',      floor: 'Ground Floor', pos: [-11, 0, -11], photos: [18, 13] },
+    { name: 'Garden',           floor: 'Ground Floor', pos: [-16, 0, 0],   photos: [21, 22, 15] },
+    { name: 'The Architecture', floor: 'Ground Floor', pos: [-11, 0, 11],  photos: [12, 14] },
+    { name: 'Master Suite',     floor: 'Upper Floor',  pos: [0, 7, 11],    photos: [1, 17, 2] },
+    { name: 'Guest Bedrooms',   floor: 'Upper Floor',  pos: [10.5, 7, -3.4], photos: [6, 7] },
+    { name: 'Bathrooms',        floor: 'Upper Floor',  pos: [6.5, 7, -10.4], photos: [3, 4] },
+    { name: 'Gym',              floor: 'Upper Floor',  pos: [-6.5, 7, -10.4], photos: [5] },
+    { name: 'Sunset Balconies', floor: 'Upper Floor',  pos: [-10.5, 7, -3.4], photos: [9, 11, 8] }
+  ];
+  const pad = (n) => String(n).padStart(2, '0');
+
+  // ================= SCENE =================
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x07080f);
+  scene.fog = new THREE.FogExp2(0x07080f, 0.016);
+
+  const camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 300);
+
+  scene.add(new THREE.AmbientLight(0x445, 0.7));
+  const key = new THREE.DirectionalLight(0x8899ff, 0.35);
+  key.position.set(10, 30, 10); scene.add(key);
+
+  // Floors: dark reflective-look discs
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x0d1020, roughness: 0.25, metalness: 0.7 });
+  const g = new THREE.Mesh(new THREE.CylinderGeometry(26, 26, 0.3, 64), floorMat);
+  g.position.y = -0.15; scene.add(g);
+  const grid = new THREE.GridHelper(52, 52, 0x1c2242, 0x131730);
+  grid.position.y = 0.02; scene.add(grid);
+  const up = new THREE.Mesh(new THREE.CylinderGeometry(17, 17, 0.25, 64),
+    new THREE.MeshStandardMaterial({ color: 0x0d1020, roughness: 0.3, metalness: 0.7, transparent: true, opacity: 0.92 }));
+  up.position.y = 6.85; scene.add(up);
+  const grid2 = new THREE.GridHelper(34, 34, 0x1c2242, 0x131730);
+  grid2.position.y = 7.0; scene.add(grid2);
+
+  // Star dust
+  const pGeo = new THREE.BufferGeometry();
+  const pN = 700, pArr = new Float32Array(pN * 3);
+  for (let i = 0; i < pN * 3; i += 3) {
+    pArr[i] = (Math.random() - 0.5) * 120;
+    pArr[i + 1] = Math.random() * 40 - 4;
+    pArr[i + 2] = (Math.random() - 0.5) * 120;
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pArr, 3));
+  scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0x5566aa, size: 0.09, transparent: true, opacity: 0.7 })));
+
+  // ================= PANELS =================
+  const loader = new THREE.TextureLoader();
+  const lbar = document.getElementById('lbar');
+  let toLoad = 0, loaded = 0;
+  const bump = () => { loaded++; lbar.style.width = (loaded / toLoad * 100) + '%';
+    if (loaded >= toLoad) setTimeout(() => document.getElementById('loader').classList.add('done'), 300); };
+
+  const clickables = [];
+
+  function labelSprite(text, sub) {
+    const c = document.createElement('canvas'); c.width = 512; c.height = 128;
+    const x = c.getContext('2d');
+    x.font = '700 44px Space Grotesk, sans-serif'; x.textAlign = 'center';
+    x.fillStyle = '#ffffff'; x.shadowColor = 'rgba(0,0,0,.7)'; x.shadowBlur = 12;
+    x.fillText(text, 256, 56);
+    x.font = '300 24px Inter, sans-serif'; x.fillStyle = '#d4af6a';
+    x.fillText(sub, 256, 96);
+    const t = new THREE.CanvasTexture(c);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true }));
+    sp.scale.set(5.4, 1.35, 1);
+    return sp;
+  }
+
+  S.forEach((st, si) => {
+    const center = new THREE.Vector3(...st.pos);
+    const out = center.clone().setY(0).normalize();          // faces outward from ring center
+    const yaw = Math.atan2(out.x, out.z);
+    st.group = new THREE.Group();
+    st.group.position.copy(center);
+    st.group.rotation.y = yaw + Math.PI;                     // panels face the ring center side
+    scene.add(st.group);
+
+    // view point: in front of panels, toward ring center
+    st.view = center.clone().add(out.clone().multiplyScalar(-5.2)); st.view.y = center.y + 1.7;
+    st.lookYaw = yaw + Math.PI;                              // will be recomputed for camera
+
+    const n = st.photos.length;
+    st.photos.forEach((ph, i) => {
+      toLoad++;
+      const main = (i === 0);
+      const w = main ? 6.2 : 3.9, h = main ? 4.13 : 2.6;
+      const ang = n === 1 ? 0 : (i === 0 ? 0 : (i === 1 ? -0.62 : 0.62));
+      const off = n === 1 ? 0 : (i === 0 ? 0 : (i === 1 ? -5.1 : 5.1));
+
+      const tex = loader.load('fs-room-' + pad(ph) + '.jpg', bump, undefined, bump);
+      const pm = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+        new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+      pm.position.set(off, (main ? h / 2 + 0.55 : h / 2 + 0.75), main ? 0 : 1.4);
+      pm.rotation.y = ang;
+      pm.userData.station = si;
+      st.group.add(pm); clickables.push(pm);
+
+      // frame
+      const fr = new THREE.Mesh(new THREE.PlaneGeometry(w + 0.22, h + 0.22),
+        new THREE.MeshStandardMaterial({ color: 0xd4af6a, roughness: 0.4, metalness: 0.6 }));
+      fr.position.copy(pm.position); fr.position.z -= 0.02;
+      fr.rotation.copy(pm.rotation);
+      st.group.add(fr);
+
+      // soft glow light per main panel
+      if (main) {
+        const gl = new THREE.PointLight(0x88aaff, 0.55, 10);
+        gl.position.set(0, h / 2 + 1, 2.5); st.group.add(gl);
+      }
+    });
+
+    const lab = labelSprite(st.name, st.floor);
+    lab.position.set(0, (st.photos.length ? 5.4 : 4), 0);
+    st.group.add(lab);
+
+    // station beacon dot
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 12),
+      new THREE.MeshBasicMaterial({ color: 0x00d2ff }));
+    dot.position.set(0, 0.3, -5.2); // near view point (local)
+    st.group.add(dot);
+  });
+
+  // connecting light lines per floor ring
+  function ring(indices, y) {
+    const pts = indices.map(i => { const v = new THREE.Vector3(...S[i].pos); v.y = y + 0.06; return v; });
+    pts.push(pts[0].clone());
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x2a3160, transparent: true, opacity: 0.8 })));
+  }
+  ring([0,1,2,3,4,5,6,7], 0);
+  ring([8,9,10,11,12], 7);
+
+  // ================= CAMERA CONTROL (FPS-style + glide) =================
+  let camPos = new THREE.Vector3(0, 1.7, 34);
+  let yaw = Math.PI, pitch = 0;                 // start looking at the ring
+  let tween = null;                             // {t, dur, fromP, toP, fromYaw, toYaw, fromPitch, toPitch}
+  const keys = {};
+
+  function faceStation(st) {
+    // yaw/pitch so camera at st.view faces panel center
+    const target = new THREE.Vector3(...st.pos); target.y = st.pos[1] + 2.2;
+    const d = target.clone().sub(st.view);
+    const yw = Math.atan2(-d.x, -d.z);
+    const pt = Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z));
+    return { yw, pt };
+  }
+
+  let active = -1;
+  function goTo(si) {
+    const st = S[si];
+    const { yw, pt } = faceStation(st);
+    // shortest yaw path
+    let fy = yaw % (Math.PI * 2), ty = yw;
+    while (ty - fy > Math.PI) ty -= Math.PI * 2;
+    while (ty - fy < -Math.PI) ty += Math.PI * 2;
+    tween = { t: 0, dur: 2.0, fromP: camPos.clone(), toP: st.view.clone(), fromYaw: fy, toYaw: ty, fromPitch: pitch, toPitch: pt };
+    active = si;
+    updateMenu(); updateTitle();
+  }
+
+  const ease = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+
+  // Drag look
+  let dragging = false, px = 0, py = 0;
+  const el = renderer.domElement;
+  const down = (x, y) => { dragging = true; px = x; py = y; el.classList.add('dragging'); };
+  const move = (x, y) => {
+    if (!dragging) return;
+    yaw -= (x - px) * 0.0042; pitch -= (y - py) * 0.0032;
+    pitch = Math.max(-1.25, Math.min(1.25, pitch));
+    px = x; py = y;
+    if (tween) tween = null;      // user takes over
+  };
+  const upEv = () => { dragging = false; el.classList.remove('dragging'); };
+  el.addEventListener('mousedown', e => down(e.clientX, e.clientY));
+  window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
+  window.addEventListener('mouseup', upEv);
+  el.addEventListener('touchstart', e => down(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+  el.addEventListener('touchmove', e => move(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+  el.addEventListener('touchend', upEv);
+
+  // Click panel = go there
+  const ray = new THREE.Raycaster(); const mouse = new THREE.Vector2();
+  let downAt = 0;
+  el.addEventListener('pointerdown', () => downAt = Date.now());
+  el.addEventListener('pointerup', (e) => {
+    if (Date.now() - downAt > 220) return;   // was a drag
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+    const hit = ray.intersectObjects(clickables);
+    if (hit.length) goTo(hit[0].object.userData.station);
+  });
+
+  window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+  window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+  // ================= UI =================
+  const menu = document.getElementById('roomMenu');
+  let lastFloor = '';
+  S.forEach((st, i) => {
+    if (st.floor !== lastFloor) {
+      const d = document.createElement('div'); d.className = 'fl'; d.textContent = st.floor;
+      menu.appendChild(d); lastFloor = st.floor;
+    }
+    const b = document.createElement('button');
+    b.innerHTML = '<span class="n">' + pad(i + 1) + '</span>' + st.name;
+    b.onclick = () => goTo(i);
+    st.btn = b; menu.appendChild(b);
+  });
+  function updateMenu() { S.forEach((st, i) => st.btn.classList.toggle('active', i === active)); }
+  const title = document.getElementById('roomTitle');
+  function updateTitle() {
+    if (active < 0) return;
+    title.querySelector('.k').textContent = S[active].floor + ' · ' + (active + 1) + ' / ' + S.length;
+    title.querySelector('h2').textContent = S[active].name;
+  }
+  document.getElementById('nextBtn').onclick = () => goTo((active + 1 + S.length) % S.length);
+  document.getElementById('prevBtn').onclick = () => goTo((active - 1 + S.length) % S.length);
+
+  // ================= LOOP =================
+  const clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const dt = Math.min(clock.getDelta(), 0.05);
+
+    if (tween) {
+      tween.t += dt / tween.dur;
+      const k = ease(Math.min(tween.t, 1));
+      camPos.lerpVectors(tween.fromP, tween.toP, k);
+      yaw = tween.fromYaw + (tween.toYaw - tween.fromYaw) * k;
+      pitch = tween.fromPitch + (tween.toPitch - tween.fromPitch) * k;
+      if (tween.t >= 1) tween = null;
+    } else {
+      // WASD free walk
+      const sp = (keys['shift'] ? 14 : 7) * dt;
+      const fwd = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));
+      const rt = new THREE.Vector3(-fwd.z, 0, fwd.x);
+      if (keys['w'] || keys['arrowup']) camPos.addScaledVector(fwd, sp);
+      if (keys['s'] || keys['arrowdown']) camPos.addScaledVector(fwd, -sp);
+      if (keys['a']) camPos.addScaledVector(rt, -sp);
+      if (keys['d']) camPos.addScaledVector(rt, sp);
+      if (keys['q'] || keys[' ']) camPos.y += sp;
+      if (keys['e']) camPos.y -= sp;
+      camPos.y = Math.max(0.5, Math.min(14, camPos.y));
+      const r = Math.sqrt(camPos.x * camPos.x + camPos.z * camPos.z);
+      if (r > 45) { camPos.x *= 45 / r; camPos.z *= 45 / r; }
+    }
+
+    camera.position.copy(camPos);
+    const dir = new THREE.Vector3(
+      -Math.sin(yaw) * Math.cos(pitch),
+      Math.sin(pitch),
+      -Math.cos(yaw) * Math.cos(pitch)
+    );
+    camera.lookAt(camPos.clone().add(dir));
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // intro: glide to Arrival after load
+  setTimeout(() => goTo(0), 900);
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+</script>
+</body>
+</html>

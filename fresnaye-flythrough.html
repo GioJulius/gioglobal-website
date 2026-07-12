@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fresnaye Showstopper — Flythrough Concept by Gio Global</title>
+<meta name="description" content="Scroll-driven flythrough concept for the R100m Fresnaye listing. Built by Gio Global." />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --accent: #00d2ff; --gold: #d4af6a; }
+  body { font-family: 'Inter', sans-serif; background: #0b0e14; color: #fff; }
+  #track { height: 1000vh; }
+  #scene { position: fixed; inset: 0; z-index: 0; }
+
+  .hud {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 5;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 28px;
+  }
+  .logo { font-family: 'Space Grotesk'; font-weight: 700; letter-spacing: .5px; text-shadow: 0 1px 8px rgba(0,0,0,.4); }
+  .logo span { color: var(--accent); }
+  .logo small { font-size: .68rem; color: #eee; font-weight: 400; letter-spacing: 2px; }
+  .hud .cta {
+    text-decoration: none; color: #fff; font-size: .85rem; font-weight: 600;
+    padding: 10px 20px; border-radius: 99px;
+    background: linear-gradient(90deg, #6c5ce7, #00d2ff);
+  }
+  .progress {
+    position: fixed; left: 0; top: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--accent)); z-index: 6;
+  }
+  .caption {
+    position: fixed; z-index: 4; left: 6vw; bottom: 12vh; max-width: 460px;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity .5s ease, transform .5s ease;
+    pointer-events: none; text-shadow: 0 2px 14px rgba(0,0,0,.55);
+  }
+  .caption.on { opacity: 1; transform: none; pointer-events: auto; }
+  .caption .k { color: var(--gold); letter-spacing: 3px; font-size: .72rem; text-transform: uppercase; margin-bottom: 8px; }
+  .caption h2 { font-family: 'Space Grotesk'; font-size: clamp(1.6rem, 3.8vw, 2.5rem); line-height: 1.12; }
+  .caption p { margin-top: 10px; color: #e6e9f5; font-weight: 300; font-size: .95rem; line-height: 1.6; }
+  .caption .btns { margin-top: 18px; }
+  .caption .btns a {
+    display: inline-block; text-decoration: none; color: #fff; font-weight: 600; font-size: .9rem;
+    padding: 13px 26px; border-radius: 99px; margin-right: 10px; margin-top: 8px;
+    background: linear-gradient(90deg, #6c5ce7, #00d2ff);
+  }
+  .caption .btns a.ghost { background: rgba(10,12,20,.55); border: 1px solid rgba(255,255,255,.35); }
+  .specs {
+    position: fixed; right: 6vw; bottom: 12vh; z-index: 4; text-align: right;
+    opacity: 0; transition: opacity .5s; pointer-events: none; text-shadow: 0 2px 14px rgba(0,0,0,.55);
+  }
+  .specs.on { opacity: 1; }
+  .specs .row { font-family: 'Space Grotesk'; font-size: 1rem; color: #e6e9f5; margin-top: 6px; }
+  .specs .row b { color: #fff; font-size: 1.25rem; }
+  .specs .price { font-size: 1.6rem; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+  .scrollhint {
+    position: fixed; bottom: 4vh; left: 50%; transform: translateX(-50%);
+    z-index: 4; color: #fff; font-size: .75rem; letter-spacing: 2.5px;
+    text-transform: uppercase; transition: opacity .4s; text-shadow: 0 2px 10px rgba(0,0,0,.6);
+    animation: bob 1.8s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100% { transform: translate(-50%,0); } 50% { transform: translate(-50%,8px); } }
+  .scrollhint.off { opacity: 0; }
+  .disclaimer {
+    position: fixed; bottom: 8px; right: 10px; z-index: 5;
+    font-size: .58rem; color: rgba(255,255,255,.55); max-width: 400px; text-align: right;
+    text-shadow: 0 1px 6px rgba(0,0,0,.6);
+  }
+  .disclaimer a { color: rgba(255,255,255,.75); }
+</style>
+</head>
+<body>
+
+<div class="progress" id="prog"></div>
+
+<div class="hud">
+  <div class="logo">GIO<span>GLOBAL</span> <small>· FLYTHROUGH CONCEPT</small></div>
+  <a class="cta" href="mailto:gioglobalmgmt@gmail.com?subject=Fresnaye flythrough concept">Want this for your listings?</a>
+</div>
+
+<canvas id="scene"></canvas>
+<div id="track"></div>
+
+<div class="scrollhint" id="hint">Scroll to fly ▼</div>
+
+<div class="caption" data-from="0.00" data-to="0.09">
+  <div class="k">Fresnaye · Cape Town · Ref 2496805</div>
+  <h2>The Fresnaye Showstopper.</h2>
+  <p>A concept flythrough of the real R100,000,000 listing. Scroll — the drone takes you in.</p>
+</div>
+
+<div class="caption" data-from="0.14" data-to="0.26">
+  <div class="k">The Approach</div>
+  <h2>Panoramic Atlantic views. Lock-up-and-go luxury.</h2>
+  <p>Sleek lines, ambient lighting, exquisite finishes — from the street to the sea.</p>
+</div>
+
+<div class="caption" data-from="0.32" data-to="0.42">
+  <div class="k">Open-Plan Living</div>
+  <h2>Pocket doors slide away. The living room becomes the terrace.</h2>
+</div>
+
+<div class="caption" data-from="0.47" data-to="0.56">
+  <div class="k">The Double Kitchen</div>
+  <h2>Five ovens. Walk-in fridge. A concealed bar for effortless entertaining.</h2>
+</div>
+
+<div class="caption" data-from="0.61" data-to="0.70">
+  <div class="k">The Glass Elevator</div>
+  <h2>Rise through the home without touching a stair.</h2>
+</div>
+
+<div class="caption" data-from="0.74" data-to="0.84">
+  <div class="k">Master Suite</div>
+  <h2>Four ensuite bedrooms with dressing rooms. From this one, you watch the ships sail by.</h2>
+</div>
+
+<div class="caption" data-from="0.90" data-to="1.01">
+  <div class="k">Gio Global × Real Estate</div>
+  <h2>Imagine this with your real drone footage.</h2>
+  <p>I build scroll-driven flythrough websites for luxury listings — buyers explore the home before the first viewing. This concept took one day. Live in 14.</p>
+  <div class="btns">
+    <a href="mailto:gioglobalmgmt@gmail.com?subject=Flythrough for my listing">Book a flythrough</a>
+    <a class="ghost" href="https://www.remaxliving.co.za/fresnaye-house-for-sale-2496805" target="_blank" rel="noopener">View the real listing ↗</a>
+  </div>
+</div>
+
+<div class="specs" data-from="0.00" data-to="0.26">
+  <div class="price">R 100,000,000</div>
+  <div class="row"><b>5</b> Bedrooms</div>
+  <div class="row"><b>6</b> Bathrooms</div>
+  <div class="row"><b>5</b> Parking</div>
+  <div class="row"><b>723</b> m²</div>
+</div>
+
+<div class="disclaimer">
+  Unofficial concept demo by Gio Global. Property data from the public
+  <a href="https://www.remaxliving.co.za/fresnaye-house-for-sale-2496805" target="_blank" rel="noopener">RE/MAX Living listing</a> (Ref 2496805, agent Dresden Lee).
+  Not affiliated with or endorsed by RE/MAX. 3D model is an artistic impression, not the actual home.
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xaacfec);
+  scene.fog = new THREE.Fog(0xaacfec, 80, 240);
+
+  const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 400);
+
+  // ---------- LIGHTS (late golden afternoon over the Atlantic) ----------
+  const sun = new THREE.DirectionalLight(0xffe8c8, 1.25);
+  sun.position.set(-20, 30, 60);          // sun over the sea
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.left = -50; sun.shadow.camera.right = 50;
+  sun.shadow.camera.top = 50; sun.shadow.camera.bottom = -50;
+  scene.add(sun);
+  scene.add(new THREE.HemisphereLight(0xcfe4f5, 0x5f6f62, 0.8));
+  const warm = (x, y, z, i, d) => {
+    const l = new THREE.PointLight(0xffd9a0, i || 0.75, d || 16);
+    l.position.set(x, y, z); scene.add(l);
+  };
+  warm(0, 2.6, 2, 0.9);       // living
+  warm(-5, 2.6, -2, 0.85);    // kitchen
+  warm(5.2, 2.6, -2.8, 0.5, 8);  // elevator glow ground
+  warm(5.2, 5.6, -2.8, 0.5, 8);  // elevator glow top
+  warm(0, 5.6, 1, 0.85);      // master suite
+
+  // ---------- MATERIALS ----------
+  const M = {
+    lawn:  new THREE.MeshStandardMaterial({ color: 0x6f9e5f, roughness: 1 }),
+    sea:   new THREE.MeshStandardMaterial({ color: 0x2e7fae, roughness: 0.25, metalness: 0.35 }),
+    deck:  new THREE.MeshStandardMaterial({ color: 0xb99d72, roughness: 0.8 }),
+    wall:  new THREE.MeshStandardMaterial({ color: 0xf4f1ea, roughness: 0.85 }),
+    innerW:new THREE.MeshStandardMaterial({ color: 0xece7db, roughness: 0.9 }),
+    floor: new THREE.MeshStandardMaterial({ color: 0xcdc3b2, roughness: 0.55 }),  // stone floors
+    floor2:new THREE.MeshStandardMaterial({ color: 0xb28a5c, roughness: 0.6 }),   // upstairs wood
+    roof:  new THREE.MeshStandardMaterial({ color: 0x3c3833, roughness: 0.8 }),
+    glass: new THREE.MeshStandardMaterial({ color: 0xa8d8ea, roughness: 0.08, metalness: 0.3, transparent: true, opacity: 0.32 }),
+    frame: new THREE.MeshStandardMaterial({ color: 0x2e2b28, roughness: 0.6 }),
+    sofa:  new THREE.MeshStandardMaterial({ color: 0xd8d2c4, roughness: 0.95 }),
+    dark:  new THREE.MeshStandardMaterial({ color: 0x33302c, roughness: 0.7 }),
+    wood:  new THREE.MeshStandardMaterial({ color: 0x6e4f33, roughness: 0.7 }),
+    white: new THREE.MeshStandardMaterial({ color: 0xf7f7f2, roughness: 0.5 }),
+    marble:new THREE.MeshStandardMaterial({ color: 0xe8e6e1, roughness: 0.25 }),
+    bed:   new THREE.MeshStandardMaterial({ color: 0xdfe4ec, roughness: 0.95 }),
+    gold:  new THREE.MeshStandardMaterial({ color: 0xd4af6a, roughness: 0.35, metalness: 0.6 }),
+    pool:  new THREE.MeshStandardMaterial({ color: 0x37b6d9, roughness: 0.12, metalness: 0.2 }),
+    leaf:  new THREE.MeshStandardMaterial({ color: 0x4a7d46, roughness: 1 }),
+    trunk: new THREE.MeshStandardMaterial({ color: 0x5b4531, roughness: 1 }),
+    mount: new THREE.MeshStandardMaterial({ color: 0x7d8471, roughness: 1 }),
+    ship:  new THREE.MeshStandardMaterial({ color: 0x363c47, roughness: 0.8 })
+  };
+
+  const box = (w, h, d, mat, x, y, z, shadow = true) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    m.position.set(x, y, z);
+    m.castShadow = shadow; m.receiveShadow = true;
+    scene.add(m); return m;
+  };
+
+  // ---------- TERRAIN: lawn slope, then the Atlantic (ocean at z > 16) ----------
+  const lawn = new THREE.Mesh(new THREE.PlaneGeometry(200, 70), M.lawn);
+  lawn.rotation.x = -Math.PI / 2; lawn.position.set(0, 0, -19); lawn.receiveShadow = true;
+  scene.add(lawn);
+  const sea = new THREE.Mesh(new THREE.PlaneGeometry(400, 260), M.sea);
+  sea.rotation.x = -Math.PI / 2; sea.position.set(0, -0.6, 140);
+  scene.add(sea);
+  // cliff edge strip
+  box(200, 1.2, 3, M.mount, 0, -0.6, 17.5, false);
+
+  // Lion's Head-ish peak behind the house
+  const peak = new THREE.Mesh(new THREE.ConeGeometry(22, 34, 8), M.mount);
+  peak.position.set(-30, 16, -70); scene.add(peak);
+  const peak2 = new THREE.Mesh(new THREE.ConeGeometry(30, 22, 7), M.mount);
+  peak2.position.set(35, 10, -80); scene.add(peak2);
+
+  // Container ship on the horizon
+  const ship = new THREE.Group();
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(16, 2, 3.5), M.ship); hull.position.y = 0.4; ship.add(hull);
+  const bridge = new THREE.Mesh(new THREE.BoxGeometry(2.4, 3, 3), M.white); bridge.position.set(-5.5, 2.6, 0); ship.add(bridge);
+  const containers = new THREE.Mesh(new THREE.BoxGeometry(8, 1.6, 2.8), M.gold); containers.position.set(2, 1.9, 0); ship.add(containers);
+  ship.position.set(28, -0.4, 95); scene.add(ship);
+
+  // ---------- HOUSE — two storeys, glass facing the sea (+z) ----------
+  const H = 3.1, T = 0.25, W = 17, D = 11;   // storey height, wall thickness, width, depth
+  // Ground slab + upper slab (upper slab has a cutout for the glass elevator at x≈5.2, z≈-2.8)
+  box(W, 0.25, D, M.floor, 0, 0.12, 0);
+  // upper slab in 3 pieces to leave elevator void (void: x 4.1→6.3, z -3.9→-1.7)
+  box(W, 0.22, 7.1, M.floor2, 0, H + 0.11, 1.95);                 // big front piece (z -1.6→5.5)
+  box(12.6, 0.22, 3.9, M.floor2, -2.2, H + 0.11, -3.55);          // back-left piece
+  box(2.2, 0.22, 3.9, M.floor2, 7.4, H + 0.11, -3.55);            // back-right sliver... wait W/2=8.5 → x 6.3→8.5 center 7.4 ✓
+
+  // GROUND FLOOR walls
+  box(W, H, T, M.wall, 0, H / 2, -5.5);                            // back wall
+  box(T, H, D, M.wall, -8.5, H / 2, 0);                            // left wall
+  box(T, H, D, M.wall, 8.5, H / 2, 0);                             // right wall
+  // Sea-facing (front, z=+5.5): pocket-door glass wall, mostly open in the middle
+  box(3.4, H, T, M.wall, -6.8, H / 2, 5.5);                        // left pier
+  box(3.4, H, T, M.wall, 6.8, H / 2, 5.5);                         // right pier
+  box(10.2, 0.4, T, M.frame, 0, H - 0.2, 5.5);                     // header
+  box(4.6, H - 0.4, 0.08, M.glass, -4.4, (H - 0.4) / 2, 5.5, false); // pocket glass slid left
+  // (middle 6m stands OPEN — doors pocketed away, room flows to terrace)
+
+  // Kitchen zone divider (left back) — double kitchen behind
+  box(T, H, 5, M.innerW, -2.2, H / 2, -3);
+  box(4, H, T, M.innerW, -6.5, H / 2, -0.5);
+
+  // SECOND FLOOR walls
+  box(W, H, T, M.wall, 0, H * 1.5 + 0.2, -5.5);
+  box(T, H, D, M.wall, -8.5, H * 1.5 + 0.2, 0);
+  box(T, H, D, M.wall, 8.5, H * 1.5 + 0.2, 0);
+  // Sea-facing upper: full glass with frames
+  box(W, 0.35, T, M.frame, 0, H + 0.35, 5.5);
+  box(W, 0.35, T, M.frame, 0, 2 * H + 0.25, 5.5);
+  box(W - 1, H - 0.9, 0.08, M.glass, 0, H * 1.5 + 0.15, 5.5, false);
+  // Bedroom dividers upstairs
+  box(T, H, 6, M.innerW, -3.4, H * 1.5 + 0.2, -0.5);
+  box(T, H, 6, M.innerW, 3.4, H * 1.5 + 0.2, -0.5);
+
+  // ROOF — floating slab, modern overhang
+  box(W + 1.6, 0.35, D + 1.6, M.roof, 0, 2 * H + 0.55, 0);
+
+  // GLASS ELEVATOR (x 4.4→6, z -3.6→-2) — glass shaft + gold cab
+  box(0.06, 2 * H, 1.7, M.glass, 4.35, H, -2.8, false);
+  box(0.06, 2 * H, 1.7, M.glass, 6.05, H, -2.8, false);
+  box(1.7, 2 * H, 0.06, M.glass, 5.2, H, -3.65, false);
+  box(0.08, 2 * H, 0.08, M.gold, 4.35, H, -3.65);
+  box(0.08, 2 * H, 0.08, M.gold, 6.05, H, -3.65);
+  box(0.08, 2 * H, 0.08, M.gold, 4.35, H, -1.95);
+  box(0.08, 2 * H, 0.08, M.gold, 6.05, H, -1.95);
+  const cab = box(1.5, 0.12, 1.5, M.gold, 5.2, 0.2, -2.8);         // elevator platform (animates up)
+
+  // ---------- TERRACE + POOL (sea side) ----------
+  box(W, 0.18, 7, M.deck, 0, 0.09, 9);                             // terrace deck
+  box(7.5, 0.22, 3.4, M.pool, -3.4, 0.12, 10.2, false);            // rim-flow pool
+  box(8.1, 0.1, 4, M.marble, -3.4, 0.05, 10.2, false);
+  // loungers
+  box(0.7, 0.25, 1.9, M.white, 2.6, 0.3, 10); box(0.7, 0.25, 1.9, M.white, 3.7, 0.3, 10);
+
+  // ---------- GROUND FLOOR FURNITURE ----------
+  // Lobby hint (right side): console + gold art
+  box(2, 0.9, 0.5, M.dark, 6.8, 0.6, -5.1);
+  box(1.2, 1.4, 0.08, M.gold, 6.8, 1.9, -5.44);
+  // Living: two facing sofas + marble coffee table, looking at the sea
+  box(3.4, 0.5, 1.1, M.sofa, 0, 0.45, 3.2); box(3.4, 0.6, 0.22, M.sofa, 0, 0.95, 3.74);
+  box(3.4, 0.5, 1.1, M.sofa, 0, 0.45, 0.4); box(3.4, 0.6, 0.22, M.sofa, 0, 0.95, -0.14);
+  box(1.8, 0.34, 0.9, M.marble, 0, 0.38, 1.8);
+  box(4.6, 0.05, 3.2, new THREE.MeshStandardMaterial({ color: 0xb9ab92, roughness: 1 }), 0, 0.24, 1.8, false);
+  // Dining (right of living)
+  box(2.6, 0.08, 1.2, M.wood, 5.2, 0.78, 2);
+  box(0.12, 0.74, 0.12, M.wood, 4.2, 0.4, 1.6); box(0.12, 0.74, 0.12, M.wood, 6.2, 0.4, 1.6);
+  box(0.12, 0.74, 0.12, M.wood, 4.2, 0.4, 2.4); box(0.12, 0.74, 0.12, M.wood, 6.2, 0.4, 2.4);
+  // DOUBLE KITCHEN (left, behind divider): main island + back counters + hidden second kitchen
+  box(2.8, 1.05, 1.1, M.marble, -5.4, 0.72, -1.8);                  // waterfall island
+  box(5.6, 0.95, 0.7, M.dark, -5.6, 0.68, -5.05);                   // back counter run
+  box(0.55, 2.2, 0.6, M.dark, -8.1, 1.2, -4.3);                     // walk-in fridge
+  box(0.5, 1.8, 0.55, M.frame, -2.6, 1.05, -5.05);                  // oven stack 1
+  box(0.5, 1.8, 0.55, M.frame, -3.25, 1.05, -5.05);                 // oven stack 2
+  box(2.2, 0.9, 0.55, M.gold, -7.9, 0.62, -1.2);                    // concealed bar (gold accent)
+
+  // ---------- UPSTAIRS: MASTER SUITE (center bay, sea-facing) ----------
+  const yU = H + 0.22;
+  box(2.4, 0.45, 3.1, M.bed, 0, yU + 0.5, -2.4);                    // bed
+  box(2.4, 0.3, 0.9, M.white, 0, yU + 0.82, -3.4);                  // pillows
+  box(2.7, 1, 0.15, M.wood, 0, yU + 0.85, -3.95);                   // headboard
+  box(0.6, 0.45, 0.6, M.wood, -1.8, yU + 0.42, -3.5);
+  box(0.6, 0.45, 0.6, M.wood, 1.8, yU + 0.42, -3.5);
+  box(2.2, 0.4, 0.8, M.sofa, 0, yU + 0.42, 1.6);                    // window bench facing the ships
+  // dressing room hint (left bay)
+  box(0.5, 2.4, 4, M.wood, -7.9, yU + 1.2, -1);
+  // ensuite hint (right bay)
+  box(1.6, 0.5, 0.8, M.marble, 6.5, yU + 0.5, -4.6);
+
+  // ---------- TREES ----------
+  const tree = (x, z, s) => {
+    const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.2 * s, 0.28 * s, 1.5 * s, 7), M.trunk);
+    tr.position.set(x, 0.75 * s, z); tr.castShadow = true; scene.add(tr);
+    const fo = new THREE.Mesh(new THREE.IcosahedronGeometry(1.2 * s, 1), M.leaf);
+    fo.position.set(x, 2 * s, z); fo.castShadow = true; fo.scale.y = 1.3; scene.add(fo);
+  };
+  tree(-12, 7, 1.3); tree(12, 6, 1.1); tree(-14, -6, 1); tree(14, -8, 1.2);
+  tree(-20, 2, 1.4); tree(19, -2, 1);
+
+  // ---------- CAMERA FLIGHT ----------
+  // over the Atlantic → sweep to the terrace → through pocket doors → living → kitchen →
+  // glass elevator UP → master suite → out the upper glass, away over the sea
+  const posPath = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-40, 30, 90),      // over the sea, house in the distance
+    new THREE.Vector3(-18, 16, 55),
+    new THREE.Vector3(0, 6, 30),         // low over the water toward terrace
+    new THREE.Vector3(-1, 2.2, 12),      // over the pool deck
+    new THREE.Vector3(0, 1.9, 6.5),      // at the open pocket doors
+    new THREE.Vector3(0, 1.8, 2.4),      // living room between sofas
+    new THREE.Vector3(-2.6, 1.8, -0.6),  // toward kitchen opening
+    new THREE.Vector3(-5.2, 1.7, -2.6),  // in the double kitchen
+    new THREE.Vector3(-2, 1.8, -2.4),    // back across
+    new THREE.Vector3(5.2, 1.6, -2.8),   // INSIDE the glass elevator
+    new THREE.Vector3(5.2, 4.9, -2.8),   // rising…
+    new THREE.Vector3(3, 4.9, -1.6),     // step out on the landing
+    new THREE.Vector3(0.5, 4.8, -0.5),   // master suite, by the bed
+    new THREE.Vector3(0, 5, 3.8),        // at the upper glass, sea filling the view
+    new THREE.Vector3(0, 6.5, 18),       // out over the pool (cinematic exit)
+    new THREE.Vector3(20, 12, 50),       // sweeping away
+    new THREE.Vector3(45, 20, 85)        // final wide over the Atlantic
+  ], false, 'catmullrom', 0.1);
+
+  const lookPath = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0, 3, 0),          // the house
+    new THREE.Vector3(0, 3, 0),
+    new THREE.Vector3(0, 2, 4),          // terrace
+    new THREE.Vector3(0, 1.6, 5.5),      // the open doors
+    new THREE.Vector3(0, 1.6, 1.5),      // living
+    new THREE.Vector3(-1, 1.4, 0),       // toward kitchen
+    new THREE.Vector3(-5.4, 1.2, -1.8),  // island
+    new THREE.Vector3(-5.6, 1.4, -5),    // ovens/counters
+    new THREE.Vector3(5.2, 1.5, -2.8),   // elevator
+    new THREE.Vector3(5.2, 3, -2.8),     // up the shaft
+    new THREE.Vector3(0, 4.5, 0),        // out toward suite while rising
+    new THREE.Vector3(0, 4.6, -2.2),     // the bed
+    new THREE.Vector3(0, 4.6, 2),        // window bench
+    new THREE.Vector3(28, 2, 80),        // THE SHIP on the horizon
+    new THREE.Vector3(0, 4.5, 0),        // back at the house
+    new THREE.Vector3(0, 4, 0),
+    new THREE.Vector3(0, 3, 0)
+  ], false, 'catmullrom', 0.1);
+
+  // ---------- SCROLL ----------
+  let target = 0, current = 0;
+  const getT = () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    return max > 0 ? Math.min(window.scrollY / max, 1) : 0;
+  };
+  window.addEventListener('scroll', () => { target = getT(); });
+
+  const caps = document.querySelectorAll('.caption, .specs');
+  const hint = document.getElementById('hint');
+  const prog = document.getElementById('prog');
+
+  function updateHud(t) {
+    caps.forEach((c) => {
+      const a = parseFloat(c.dataset.from), b = parseFloat(c.dataset.to);
+      c.classList.toggle('on', t >= a && t <= b);
+    });
+    hint.classList.toggle('off', t > 0.03);
+    prog.style.width = (t * 100) + '%';
+  }
+
+  const clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const et = clock.getElapsedTime();
+    current += (target - current) * 0.07;
+    const t = Math.max(0, Math.min(current, 1));
+    camera.position.copy(posPath.getPointAt(t));
+    camera.lookAt(lookPath.getPointAt(t));
+    // elevator cab follows the camera during the ride (t 0.53→0.62 of path ≈ elevator points)
+    const cabT = Math.max(0, Math.min((t - 0.53) / 0.09, 1));
+    cab.position.y = 0.2 + cabT * (H + 0.2);
+    // ship drifts, sea shimmers
+    ship.position.x = 28 - et * 0.35;
+    updateHud(target);
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+</script>
+</body>
+</html>
