@@ -489,5 +489,77 @@
   document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 })();
 </script>
+
+<!-- ============ GIO GLOBAL ANALYTICS (GoatCounter — free, privacy-friendly) ============ -->
+<script>
+(function () {
+  // ---- CONFIG: after creating the free account at goatcounter.com, the site code below must match ----
+  var SITE = 'gioglobal'; // dashboard: https://gioglobal.goatcounter.com
+
+  // Load GoatCounter
+  var s = document.createElement('script');
+  s.async = true; s.src = '//gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', 'https://' + SITE + '.goatcounter.com/count');
+  document.head.appendChild(s);
+
+  function track(name) {
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: name, title: name, event: true });
+    }
+  }
+
+  // ---- LEADS (the money metric): every email click = a lead ----
+  document.querySelectorAll('a[href^="mailto"]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      track('lead-email-click');
+      var where = a.closest('section') ? (a.closest('section').id || 'hero') : 'nav';
+      track('lead-from-' + where);
+    });
+  });
+
+  // ---- CTA + nav clicks ----
+  document.querySelectorAll('.btn, nav .links a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      track('click-' + (a.textContent || 'btn').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 30));
+    });
+  });
+
+  // ---- Section views (how far people actually explore) ----
+  var seen = {};
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting && e.target.id && !seen[e.target.id]) {
+        seen[e.target.id] = true;
+        track('viewed-' + e.target.id);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('section[id]').forEach(function (sec) { io.observe(sec); });
+
+  // ---- Scroll depth ----
+  var depths = { 50: false, 90: false };
+  window.addEventListener('scroll', function () {
+    var p = (window.scrollY + window.innerHeight) / document.body.scrollHeight * 100;
+    [50, 90].forEach(function (d) {
+      if (p >= d && !depths[d]) { depths[d] = true; track('scroll-' + d); }
+    });
+  }, { passive: true });
+
+  // ---- Time on page (buckets, sent when they leave) ----
+  var t0 = Date.now(), sentTime = false;
+  function timeBucket() {
+    var sec = (Date.now() - t0) / 1000;
+    if (sec < 10) return 'time-0-10s';
+    if (sec < 30) return 'time-10-30s';
+    if (sec < 60) return 'time-30-60s';
+    if (sec < 180) return 'time-1-3min';
+    if (sec < 300) return 'time-3-5min';
+    return 'time-5min-plus';
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden' && !sentTime) { sentTime = true; track(timeBucket()); }
+  });
+})();
+</script>
 </body>
 </html>
