@@ -4,20 +4,23 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Luxe Nails Studio — Concept Demo</title>
-<meta name="description" content="Concept demo: a 3D interactive nail studio website built by Gio Global." />
+<meta name="description" content="Concept demo: a premium 3D interactive nail studio website built by Gio Global." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --bg: #0e0a0c;
-    --bg2: #180f13;
-    --card: rgba(255,255,255,0.045);
-    --border: rgba(232,196,160,0.16);
-    --text: #f5ece7;
-    --muted: #b9a8a3;
-    --rose: #d99a8f;
-    --champagne: #e8c4a0;
-    --rose-deep: #b8776b;
+    --bg: #050304;
+    --bg2: #0c0708;
+    --panel: rgba(22,16,17,0.55);
+    --panel-strong: rgba(22,16,17,0.78);
+    --panel-border: rgba(233,197,158,0.16);
+    --text: #f7efe9;
+    --muted: #b7a49d;
+    --rose: #cf8f79;
+    --rose-light: #e9bfa0;
+    --champagne: #eccb9c;
+    --gold: #c9a25a;
+    --rose-deep: #8f5344;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior: smooth; }
@@ -26,109 +29,198 @@
     font-family: 'Inter', sans-serif; overflow-x: hidden;
   }
   .serif { font-family: 'Cormorant Garamond', serif; }
-  section { max-width: 1100px; margin: 0 auto; padding: 90px 24px; position: relative; z-index: 1; }
+  section { max-width: 1180px; margin: 0 auto; padding: 130px 28px; position: relative; z-index: 1; }
+
+  .grain {
+    position: fixed; inset:0; z-index: 90; pointer-events:none; opacity: .035; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
 
   .badge {
-    position: fixed; top: 18px; left: 18px; z-index: 50;
-    background: rgba(14,10,12,0.7); backdrop-filter: blur(8px);
-    border: 1px solid var(--border); color: var(--muted);
-    font-size: 11px; letter-spacing: 1px; padding: 6px 12px; border-radius: 99px;
+    position: fixed; top: 20px; left: 20px; z-index: 50;
+    background: var(--panel); backdrop-filter: blur(14px);
+    border: 1px solid var(--panel-border); color: var(--muted);
+    font-size: 10.5px; letter-spacing: 1.4px; padding: 7px 14px; border-radius: 99px;
   }
 
   nav {
     position: fixed; top:0; left:0; right:0; z-index: 40;
     display:flex; align-items:center; justify-content:space-between;
-    padding: 20px 40px; background: rgba(14,10,12,0.55); backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
+    padding: 22px 48px; background: rgba(5,3,4,0.45); backdrop-filter: blur(18px) saturate(140%);
+    border-bottom: 1px solid var(--panel-border);
   }
-  nav .logo { font-family:'Cormorant Garamond', serif; font-size: 1.3rem; letter-spacing: 3px; }
-  nav .links { display:flex; align-items:center; gap: 30px; }
-  nav .links a { color: var(--muted); text-decoration:none; font-size: 0.82rem; letter-spacing: .5px; transition: color .2s; }
+  nav .logo { font-family:'Cormorant Garamond', serif; font-size: 1.4rem; letter-spacing: 4px; }
+  nav .logo b { font-weight: 600; color: var(--rose-light); }
+  nav .links { display:flex; align-items:center; gap: 36px; }
+  nav .links a { color: var(--muted); text-decoration:none; font-size: 0.78rem; letter-spacing: 1px; text-transform: uppercase; transition: color .25s; position: relative; }
+  nav .links a::after { content:''; position:absolute; left:0; bottom:-6px; width:0; height:1px; background: var(--rose-light); transition: width .3s; }
   nav .links a:hover { color: var(--text); }
+  nav .links a:hover::after { width: 100%; }
   nav .cta {
-    background: linear-gradient(120deg, var(--champagne), var(--rose));
-    color: #2a1712; padding: 9px 20px; border-radius: 99px; font-size: .8rem; font-weight: 600;
-    text-decoration:none; letter-spacing:.3px;
+    background: linear-gradient(120deg, var(--champagne), var(--rose), var(--champagne));
+    background-size: 220% 100%;
+    color: #241410; padding: 11px 24px; border-radius: 99px; font-size: .74rem; font-weight: 600;
+    text-decoration:none; letter-spacing:1px; text-transform: uppercase; transition: background-position .5s, transform .25s;
   }
-  @media (max-width: 720px) { nav .links a:not(.cta) { display:none; } }
+  nav .cta:hover { background-position: 100% 0; transform: translateY(-1px); }
+  @media (max-width: 780px) { nav .links a:not(.cta) { display:none; } nav { padding: 18px 24px; } }
 
   .hero {
     min-height: 100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; position:relative; padding-top: 100px;
+    text-align:center; position:relative; padding-top: 110px;
   }
-  .blob { position:absolute; border-radius:50%; filter: blur(70px); opacity:.35; z-index:0; }
-  .b1 { width:340px; height:340px; background: var(--rose); top: -60px; left: -80px; }
-  .b2 { width:280px; height:280px; background: var(--champagne); bottom: 40px; right: -60px; }
-  .b3 { width:200px; height:200px; background: var(--rose-deep); top: 40%; left: 60%; opacity:.25; }
+  .blob { position:absolute; border-radius:50%; filter: blur(90px); opacity:.28; z-index:0; }
+  .b1 { width:400px; height:400px; background: var(--rose); top: -100px; left: -110px; }
+  .b2 { width:340px; height:340px; background: var(--champagne); bottom: 20px; right: -100px; opacity: .2; }
+  .b3 { width:240px; height:240px; background: var(--gold); top: 42%; left: 58%; opacity:.16; }
 
-  .hero .eyebrow { color: var(--rose); letter-spacing: 4px; font-size: .75rem; text-transform:uppercase; margin-bottom: 18px; }
-  .hero h1 { font-family:'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(2.6rem, 7vw, 4.6rem); letter-spacing: 4px; text-transform: uppercase; }
-  .hero h1 span { background: linear-gradient(120deg, var(--champagne), var(--rose)); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .hero p.sub { margin-top: 22px; color: var(--muted); font-size: 1.05rem; max-width: 480px; font-weight:300; }
-  .hero .btns { margin-top: 36px; display:flex; gap: 16px; flex-wrap:wrap; justify-content:center; }
-  .btn { display:inline-block; text-decoration:none; padding: 14px 28px; border-radius: 99px; font-size:.88rem; letter-spacing:.3px; transition: transform .2s; }
-  .btn:hover { transform: translateY(-2px); }
-  .btn.primary { background: linear-gradient(120deg, var(--champagne), var(--rose)); color:#2a1712; font-weight:600; }
-  .btn.ghost { border: 1px solid var(--border); color: var(--text); }
+  .hero .eyebrow { display:flex; align-items:center; gap:14px; color: var(--rose-light); letter-spacing: 4px; font-size: .72rem; text-transform:uppercase; margin-bottom: 26px; }
+  .hero .eyebrow::before, .hero .eyebrow::after { content:''; width: 30px; height:1px; background: linear-gradient(90deg, transparent, var(--rose-light)); }
+  .hero .eyebrow::after { background: linear-gradient(90deg, var(--rose-light), transparent); }
+  .hero h1 { font-family:'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(3rem, 8vw, 5.4rem); letter-spacing: 6px; text-transform: uppercase; line-height:1.05; }
+  .hero h1 span { background: linear-gradient(120deg, var(--champagne), var(--rose-light) 50%, var(--gold)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .hero p.sub { margin-top: 26px; color: var(--muted); font-size: 1.1rem; max-width: 500px; font-weight:300; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+  .hero .btns { margin-top: 42px; display:flex; gap: 18px; flex-wrap:wrap; justify-content:center; }
+  .btn { display:inline-block; text-decoration:none; padding: 16px 34px; border-radius: 99px; font-size:.78rem; letter-spacing:1.2px; text-transform: uppercase; transition: transform .25s, box-shadow .25s; }
+  .btn:hover { transform: translateY(-3px); }
+  .btn.primary { background: linear-gradient(120deg, var(--champagne), var(--rose), var(--champagne)); background-size:220% 100%; color:#241410; font-weight:600; box-shadow: 0 12px 40px rgba(207,143,121,0.25); }
+  .btn.primary:hover { background-position:100% 0; box-shadow: 0 16px 50px rgba(207,143,121,0.4); }
+  .btn.ghost { border: 1px solid var(--panel-border); color: var(--text); backdrop-filter: blur(10px); }
+  .btn.ghost:hover { border-color: var(--rose-light); }
+  .scroll-cue { position:absolute; bottom: 36px; left:50%; transform:translateX(-50%); color:var(--muted); font-size:.65rem; letter-spacing:3px; text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .scroll-cue .line { width:1px; height:34px; background: linear-gradient(var(--rose-light), transparent); animation: scrolldrop 1.8s ease-in-out infinite; }
+  @keyframes scrolldrop { 0%{opacity:0; transform: scaleY(0.4); transform-origin: top;} 40%{opacity:1; transform: scaleY(1); transform-origin: top;} 100%{opacity:0; transform: scaleY(1); transform-origin: bottom;} }
 
-  .kicker { color: var(--rose); letter-spacing:3px; font-size:.72rem; text-transform:uppercase; text-align:center; }
-  h2.title { font-family:'Cormorant Garamond', serif; font-weight:500; font-size: clamp(1.8rem,4vw,2.6rem); text-align:center; margin: 10px 0 50px; }
+  .reveal { opacity:0; transform: translateY(36px); transition: opacity 1s ease, transform 1s ease; }
+  .reveal.on { opacity:1; transform:none; }
 
-  .gallery-grid { display:grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
-  .swatch { border-radius: 16px; overflow:hidden; border: 1px solid var(--border); background: var(--card); }
-  .swatch .art { height: 150px; }
-  .swatch .lbl { padding: 14px 16px; font-size:.85rem; color: var(--text); }
-  .swatch .lbl small { display:block; color: var(--muted); font-size:.7rem; margin-top:3px; letter-spacing:.5px; }
-  @media (max-width:720px){ .gallery-grid { grid-template-columns: repeat(2,1fr); } }
+  .kicker { display:flex; align-items:center; justify-content:center; gap:14px; color: var(--rose-light); letter-spacing:3px; font-size:.7rem; text-transform:uppercase; text-align:center; }
+  .kicker::before, .kicker::after { content:''; width: 34px; height:1px; background: linear-gradient(90deg, transparent, var(--rose-light)); }
+  .kicker::after { background: linear-gradient(90deg, var(--rose-light), transparent); }
+  h2.title { font-family:'Cormorant Garamond', serif; font-weight:500; font-size: clamp(2rem,4.5vw,3rem); text-align:center; margin: 14px 0 60px; letter-spacing: 1px; }
 
-  .lab { display:grid; grid-template-columns: 1fr 300px; gap: 40px; align-items:center; }
-  .lab-canvas { position:relative; height: 420px; border-radius: 20px; overflow:hidden; border:1px solid var(--border); background: radial-gradient(circle at 50% 30%, #221619, #0e0a0c 75%); cursor: grab; }
+  .gallery-grid { display:grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+  .swatch {
+    border-radius: 18px; overflow:hidden; border: 1px solid var(--panel-border); background: var(--panel);
+    backdrop-filter: blur(10px); position:relative; transition: transform .4s ease, box-shadow .4s ease;
+  }
+  .swatch:hover { transform: translateY(-8px); box-shadow: 0 24px 50px rgba(0,0,0,0.5); }
+  .swatch .art { height: 170px; position:relative; overflow:hidden; }
+  .swatch .art::after {
+    content:''; position:absolute; inset:0; background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%);
+    transform: translateX(-120%); transition: transform .8s ease;
+  }
+  .swatch:hover .art::after { transform: translateX(120%); }
+  .swatch .lbl { padding: 18px 20px; }
+  .swatch .lbl .name { font-family:'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--text); }
+  .swatch .lbl small { display:block; color: var(--muted); font-size:.72rem; margin-top:5px; letter-spacing:.5px; }
+  @media (max-width:780px){ .gallery-grid { grid-template-columns: repeat(2,1fr); } }
+
+  .lab-wrap { position:relative; }
+  .lab-canvas {
+    position:relative; height: 560px; border-radius: 26px; overflow:hidden; border:1px solid var(--panel-border);
+    background: radial-gradient(circle at 50% 32%, #241416, var(--bg) 78%); cursor: grab;
+  }
   .lab-canvas:active { cursor: grabbing; }
   .lab-canvas canvas { display:block; width:100%; height:100%; }
-  .lab-hint { position:absolute; bottom:14px; left:0; right:0; text-align:center; color: var(--muted); font-size:.72rem; letter-spacing:.5px; pointer-events:none; }
-  .panel { display:flex; flex-direction:column; gap: 22px; }
-  .panel h4 { font-size:.72rem; letter-spacing:1.5px; text-transform:uppercase; color: var(--muted); margin-bottom:10px; }
-  .swatches-row { display:flex; gap:10px; flex-wrap:wrap; }
-  .dot { width:30px; height:30px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition: transform .15s, border-color .15s; }
-  .dot:hover { transform: scale(1.1); }
-  .dot.active { border-color: var(--champagne); transform: scale(1.12); }
-  .opt-row { display:flex; gap:8px; }
-  .opt-btn {
-    flex:1; background: var(--card); border:1px solid var(--border); color: var(--muted);
-    padding: 9px 6px; border-radius: 10px; font-size:.76rem; cursor:pointer; transition: all .15s;
+  .lab-glow { position:absolute; bottom:-40px; left:50%; transform:translateX(-50%); width:70%; height:80px; background: radial-gradient(ellipse, rgba(207,143,121,0.35), transparent 70%); filter: blur(10px); z-index:0; }
+  .lab-hint { position:absolute; bottom:16px; left:0; right:0; text-align:center; color: var(--muted); font-size:.68rem; letter-spacing:1px; text-transform:uppercase; pointer-events:none; }
+
+  .float-panel {
+    position:absolute; top:50%; transform: translateY(-50%);
+    background: var(--panel-strong); backdrop-filter: blur(22px) saturate(150%);
+    border: 1px solid var(--panel-border); border-top: 1px solid rgba(255,255,255,0.14);
+    border-radius: 20px; padding: 26px 22px; width: 190px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
   }
-  .opt-btn.active { background: linear-gradient(120deg, var(--champagne), var(--rose)); color:#2a1712; border-color: transparent; font-weight:600; }
-  @media (max-width:820px){ .lab { grid-template-columns: 1fr; } }
+  .float-panel.left { left: 24px; }
+  .float-panel.right { right: 24px; }
+  .float-panel h4 { font-family:'Cormorant Garamond', serif; font-size:.85rem; letter-spacing:1.5px; text-transform:uppercase; color: var(--rose-light); margin-bottom:14px; font-weight: 500; }
+  .float-panel + .float-panel { margin-top: 20px; }
+  .swatches-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .dot { width:30px; height:30px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition: transform .2s, border-color .2s, box-shadow .2s; position:relative; }
+  .dot:hover { transform: scale(1.15); }
+  .dot.active { border-color: var(--champagne); box-shadow: 0 0 0 3px rgba(236,203,156,0.2); }
+  .opt-col { display:flex; flex-direction:column; gap:8px; }
+  .opt-btn {
+    background: rgba(255,255,255,0.03); border:1px solid var(--panel-border); color: var(--muted);
+    padding: 10px 12px; border-radius: 10px; font-size:.76rem; cursor:pointer; transition: all .2s; text-align:left;
+    letter-spacing: .3px;
+  }
+  .opt-btn:hover { border-color: var(--rose-light); color: var(--text); }
+  .opt-btn.active { background: linear-gradient(120deg, var(--champagne), var(--rose)); color:#241410; border-color: transparent; font-weight:600; }
+  @media (max-width:880px){
+    .lab-canvas { height: 440px; }
+    .float-panel { position: static; transform:none; width:auto; margin: 14px 0 0 !important; }
+    .float-panel.left, .float-panel.right { left:auto; right:auto; }
+  }
 
-  .book { background: var(--card); border:1px solid var(--border); border-radius: 22px; padding: 40px; display:grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-  .cal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
-  .cal-head .m { font-family:'Cormorant Garamond', serif; font-size:1.2rem; }
-  .cal-nav { display:flex; gap:6px; }
-  .cal-nav button { background:none; border:1px solid var(--border); color: var(--muted); width:26px; height:26px; border-radius:50%; cursor:pointer; }
+  .design-summary {
+    display:flex; align-items:center; gap: 16px; margin-top: 26px;
+    background: var(--panel); border:1px solid var(--panel-border); backdrop-filter: blur(14px);
+    border-radius: 16px; padding: 16px 22px; max-width: 480px; margin-left:auto; margin-right:auto;
+  }
+  .design-summary .swirl { width: 44px; height:44px; border-radius:50%; flex-shrink:0; box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 0 16px rgba(207,143,121,0.25); transition: background .3s; }
+  .design-summary .txt { text-align:left; }
+  .design-summary .txt .t1 { font-family:'Cormorant Garamond', serif; font-size:1.05rem; }
+  .design-summary .txt .t2 { color: var(--muted); font-size:.72rem; letter-spacing:.5px; margin-top:2px; }
+
+  .book-panel {
+    background: var(--panel); backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid var(--panel-border); border-top: 1px solid rgba(255,255,255,0.12);
+    border-radius: 26px; padding: 46px; box-shadow: 0 30px 70px rgba(0,0,0,0.45);
+  }
+  .artist-row { display:flex; gap:14px; margin-bottom: 34px; flex-wrap:wrap; }
+  .artist {
+    flex:1; min-width: 140px; display:flex; align-items:center; gap:12px; padding: 12px 14px;
+    border: 1px solid var(--panel-border); border-radius:14px; cursor:pointer; transition: all .25s; background: rgba(255,255,255,0.02);
+  }
+  .artist:hover { border-color: var(--rose-light); }
+  .artist.sel { border-color: var(--champagne); background: rgba(236,203,156,0.08); }
+  .artist .av {
+    width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Cormorant Garamond', serif; font-size:.95rem; font-weight:600; color:#241410; flex-shrink:0;
+  }
+  .artist .info .n { font-size:.82rem; }
+  .artist .info .r { font-size:.66rem; color: var(--muted); margin-top:2px; }
+
+  .book-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 44px; }
+  .cal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .cal-head .m { font-family:'Cormorant Garamond', serif; font-size:1.25rem; }
+  .cal-nav { display:flex; gap:8px; }
+  .cal-nav button { background: rgba(255,255,255,0.03); border:1px solid var(--panel-border); color: var(--muted); width:28px; height:28px; border-radius:50%; cursor:pointer; transition: border-color .2s; }
+  .cal-nav button:hover { border-color: var(--rose-light); }
   .cal-grid { display:grid; grid-template-columns: repeat(7,1fr); gap: 6px; text-align:center; }
-  .cal-grid .dow { color: var(--muted); font-size:.68rem; padding-bottom:6px; }
-  .cal-grid .day { padding: 8px 0; border-radius:8px; font-size:.8rem; cursor:pointer; color: var(--text); }
+  .cal-grid .dow { color: var(--muted); font-size:.66rem; padding-bottom:8px; letter-spacing:.5px; }
+  .cal-grid .day { padding: 9px 0; border-radius:8px; font-size:.8rem; cursor:pointer; color: var(--text); transition: background .2s; }
   .cal-grid .day:hover { background: rgba(255,255,255,0.06); }
-  .cal-grid .day.sel { background: linear-gradient(120deg, var(--champagne), var(--rose)); color:#2a1712; font-weight:600; }
+  .cal-grid .day.sel { background: linear-gradient(120deg, var(--champagne), var(--rose)); color:#241410; font-weight:600; }
   .cal-grid .day.empty { visibility:hidden; }
-  .slots { display:flex; flex-direction:column; gap:8px; }
-  .slot { padding: 11px 14px; border:1px solid var(--border); border-radius:10px; font-size:.82rem; cursor:pointer; color: var(--muted); }
-  .slot:hover { border-color: var(--rose); color: var(--text); }
-  .slot.sel { background: linear-gradient(120deg, var(--champagne), var(--rose)); color:#2a1712; font-weight:600; border-color:transparent; }
-  .confirm-btn { margin-top: 8px; width:100%; padding: 13px; border-radius: 12px; border:none; background: linear-gradient(120deg, var(--champagne), var(--rose)); color:#2a1712; font-weight:600; cursor:pointer; font-size:.88rem; }
-  .confirm-msg { margin-top: 12px; font-size:.78rem; color: var(--rose); text-align:center; opacity:0; transition:opacity .3s; }
+  .slots { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  .slot { padding: 12px 14px; border:1px solid var(--panel-border); border-radius:10px; font-size:.8rem; cursor:pointer; color: var(--muted); text-align:center; transition: all .2s; }
+  .slot:hover { border-color: var(--rose-light); color: var(--text); }
+  .slot.sel { background: linear-gradient(120deg, var(--champagne), var(--rose)); color:#241410; font-weight:600; border-color:transparent; }
+  .confirm-btn {
+    margin-top: 26px; width:100%; padding: 15px; border-radius: 12px; border:none;
+    background: linear-gradient(120deg, var(--champagne), var(--rose), var(--champagne)); background-size:220% 100%;
+    color:#241410; font-weight:600; cursor:pointer; font-size:.82rem; letter-spacing:1px; text-transform:uppercase;
+    transition: background-position .5s, box-shadow .3s;
+  }
+  .confirm-btn:hover { background-position:100% 0; box-shadow: 0 16px 40px rgba(207,143,121,0.3); }
+  .confirm-msg { margin-top: 14px; font-size:.78rem; color: var(--rose-light); text-align:center; opacity:0; transition:opacity .4s; font-style: italic; font-family:'Cormorant Garamond', serif; }
   .confirm-msg.show { opacity:1; }
-  @media (max-width:820px){ .book { grid-template-columns: 1fr; } }
+  @media (max-width:880px){ .book-grid { grid-template-columns: 1fr; } .book-panel { padding: 28px; } }
 
-  footer { text-align:center; color: var(--muted); font-size:.75rem; padding: 40px 20px; border-top: 1px solid var(--border); }
+  footer { text-align:center; color: var(--muted); font-size:.72rem; padding: 50px 20px; border-top: 1px solid var(--panel-border); letter-spacing:.3px; }
 </style>
 </head>
 <body>
 
+<div class="grain"></div>
 <div class="badge">Concept demo — built by Gio Global</div>
 
 <nav>
-  <div class="logo">LUXE NAILS</div>
+  <div class="logo">LUXE <b>NAILS</b></div>
   <div class="links">
     <a href="#gallery">Gallery</a>
     <a href="#design">Design in 3D</a>
@@ -140,128 +232,196 @@
 <section class="hero">
   <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
   <div class="eyebrow">Cape Town</div>
-  <h1>Luxe <span>Nails</span> Studio</h1>
-  <p class="sub">Custom nail artistry, designed around you — now with a 3D preview so you can see your set before you sit down.</p>
+  <h1>Luxe <span>Nails</span><br/>Studio</h1>
+  <p class="sub">An atelier for hand-finished nail artistry — now with a living 3D preview before you ever sit in the chair.</p>
   <div class="btns">
     <a class="btn primary" href="#design">Design your nail in 3D</a>
-    <a class="btn ghost" href="#gallery">Browse styles</a>
+    <a class="btn ghost" href="#gallery">Browse the gallery</a>
   </div>
+  <div class="scroll-cue"><span>Scroll</span><span class="line"></span></div>
 </section>
 
-<section id="gallery">
+<section id="gallery" class="reveal">
   <div class="kicker">Gallery</div>
-  <h2 class="title">Styles we love</h2>
+  <h2 class="title">Signature finishes</h2>
   <div class="gallery-grid">
-    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#e8c4a0,#b8776b);"></div><div class="lbl">Chrome ombré<small>Rose gold fade</small></div></div>
-    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#f5ece7,#cbb9b3);"></div><div class="lbl">Milky nude<small>Soft everyday finish</small></div></div>
-    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#2a1a1c,#5c3a3a);"></div><div class="lbl">Black cat-eye<small>Magnetic shimmer</small></div></div>
-    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#d9c9a3,#e8c4a0);"></div><div class="lbl">Champagne shimmer<small>Fine gold glitter</small></div></div>
-    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#f5ece7,#1a1214);"></div><div class="lbl">Classic French<small>Timeless tip line</small></div></div>
-    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#c98b83,#8a4a45);"></div><div class="lbl">Marble swirl<small>Hand-painted veining</small></div></div>
+    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#eccb9c,#8f5344);"></div><div class="lbl"><div class="name">Chrome ombré</div><small>Rose gold fade</small></div></div>
+    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#f7efe9,#cbb2a8);"></div><div class="lbl"><div class="name">Milky nude</div><small>Soft everyday finish</small></div></div>
+    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#241a1c,#5c3a3a);"></div><div class="lbl"><div class="name">Black cat-eye</div><small>Magnetic shimmer</small></div></div>
+    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#d9c9a3,#eccb9c);"></div><div class="lbl"><div class="name">Champagne shimmer</div><small>Fine gold glitter</small></div></div>
+    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#f7efe9,#1a1214);"></div><div class="lbl"><div class="name">Classic French</div><small>Timeless tip line</small></div></div>
+    <div class="swatch"><div class="art" style="background:linear-gradient(135deg,#cf8f79,#7a4238);"></div><div class="lbl"><div class="name">Marble swirl</div><small>Hand-painted veining</small></div></div>
   </div>
 </section>
 
-<section id="design">
+<section id="design" class="reveal">
   <div class="kicker">Try it</div>
   <h2 class="title">Design your nail in 3D</h2>
-  <div class="lab">
+  <div class="lab-wrap">
     <div class="lab-canvas" id="labCanvas">
-      <div class="lab-hint">Drag to rotate</div>
+      <div class="lab-glow"></div>
+      <div class="lab-hint">Drag to rotate — scroll to zoom</div>
     </div>
-    <div class="panel">
-      <div>
-        <h4>Colour</h4>
-        <div class="swatches-row" id="colorRow"></div>
+    <div class="float-panel left">
+      <h4>Colour</h4>
+      <div class="swatches-row" id="colorRow"></div>
+    </div>
+    <div class="float-panel right">
+      <h4>Shape</h4>
+      <div class="opt-col" id="shapeRow">
+        <button class="opt-btn active" data-shape="round">Round</button>
+        <button class="opt-btn" data-shape="square">Square</button>
+        <button class="opt-btn" data-shape="almond">Almond</button>
       </div>
-      <div>
-        <h4>Shape</h4>
-        <div class="opt-row" id="shapeRow">
-          <button class="opt-btn active" data-shape="round">Round</button>
-          <button class="opt-btn" data-shape="square">Square</button>
-          <button class="opt-btn" data-shape="almond">Almond</button>
-        </div>
+      <h4 style="margin-top:18px;">Finish</h4>
+      <div class="opt-col" id="finishRow">
+        <button class="opt-btn active" data-finish="glossy">Glossy</button>
+        <button class="opt-btn" data-finish="matte">Matte</button>
+        <button class="opt-btn" data-finish="glitter">Glitter</button>
       </div>
-      <div>
-        <h4>Finish</h4>
-        <div class="opt-row" id="finishRow">
-          <button class="opt-btn active" data-finish="glossy">Glossy</button>
-          <button class="opt-btn" data-finish="matte">Matte</button>
-        </div>
-      </div>
+    </div>
+  </div>
+  <div class="design-summary">
+    <div class="swirl" id="summarySwirl"></div>
+    <div class="txt">
+      <div class="t1" id="summaryLine1">Rose blush</div>
+      <div class="t2" id="summaryLine2">Round · Glossy</div>
     </div>
   </div>
 </section>
 
-<section id="book">
+<section id="book" class="reveal">
   <div class="kicker">Booking</div>
-  <h2 class="title">Reserve your spot</h2>
-  <div class="book">
-    <div>
-      <div class="cal-head">
-        <div class="m" id="calMonth"></div>
-        <div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div>
+  <h2 class="title">Reserve your appointment</h2>
+  <div class="book-panel">
+    <h4 style="font-family:'Cormorant Garamond', serif; font-size:1rem; letter-spacing:1px; color:var(--rose-light); margin-bottom:16px; text-transform:uppercase;">Choose your artist</h4>
+    <div class="artist-row" id="artistRow"></div>
+    <div class="book-grid">
+      <div>
+        <div class="cal-head">
+          <div class="m" id="calMonth"></div>
+          <div class="cal-nav"><button id="calPrev">‹</button><button id="calNext">›</button></div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
       </div>
-      <div class="cal-grid" id="calGrid"></div>
-    </div>
-    <div>
-      <h4 style="font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Available times</h4>
-      <div class="slots" id="slots">
-        <div class="slot" data-t="10:00">10:00</div>
-        <div class="slot" data-t="11:30">11:30</div>
-        <div class="slot" data-t="13:00">13:00</div>
-        <div class="slot" data-t="14:30">14:30</div>
-        <div class="slot" data-t="16:00">16:00</div>
+      <div>
+        <h4 style="font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose-light);margin-bottom:14px;font-family:'Cormorant Garamond', serif;">Available times</h4>
+        <div class="slots" id="slots">
+          <div class="slot" data-t="10:00">10:00</div>
+          <div class="slot" data-t="11:30">11:30</div>
+          <div class="slot" data-t="13:00">13:00</div>
+          <div class="slot" data-t="14:30">14:30</div>
+          <div class="slot" data-t="16:00">16:00</div>
+          <div class="slot" data-t="17:30">17:30</div>
+        </div>
+        <button class="confirm-btn" id="confirmBtn">Request appointment</button>
+        <div class="confirm-msg" id="confirmMsg">Choose an artist, a date, and a time to preview your booking.</div>
       </div>
-      <button class="confirm-btn" id="confirmBtn">Request appointment</button>
-      <div class="confirm-msg" id="confirmMsg">Pick a date and time to preview a booking request.</div>
     </div>
   </div>
 </section>
 
-<footer>Luxe Nails Studio — a concept demo built by Gio Global to show what a booked appointment site could feel like.</footer>
+<footer>Luxe Nails Studio — a concept demo built by Gio Global to show what a premium booking experience could feel like.</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
+  // ---------- environment texture (soft studio gradient, for reflections) ----------
+  function makeEnvTexture(){
+    const c = document.createElement('canvas'); c.width = 256; c.height = 128;
+    const ctx = c.getContext('2d');
+    const g = ctx.createLinearGradient(0,0,0,128);
+    g.addColorStop(0, '#3a2a26');
+    g.addColorStop(0.35, '#caa27c');
+    g.addColorStop(0.55, '#efe0cf');
+    g.addColorStop(0.8, '#5c4038');
+    g.addColorStop(1, '#0c0708');
+    ctx.fillStyle = g; ctx.fillRect(0,0,256,128);
+    const tex = new THREE.CanvasTexture(c);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    return tex;
+  }
+
   // ---------- 3D nail lab ----------
   const holder = document.getElementById('labCanvas');
   const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   function sizeRenderer(){
     const w = holder.clientWidth, h = holder.clientHeight;
     renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix();
   }
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 50);
-  camera.position.set(0, 0.3, 4.2);
-  holder.appendChild(renderer.domElement);
+  const envTex = makeEnvTexture();
+  scene.environment = envTex;
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
+  camera.position.set(0, 0.35, 4.4);
+  holder.insertBefore(renderer.domElement, holder.firstChild);
 
-  scene.add(new THREE.AmbientLight(0xfff2e8, 0.55));
-  const key = new THREE.PointLight(0xfff2e0, 1.6, 20); key.position.set(3,4,4); scene.add(key);
-  const fill = new THREE.PointLight(0xd99a8f, 1.1, 20); fill.position.set(-4,-1,3); scene.add(fill);
-  const rim = new THREE.PointLight(0xe8c4a0, 0.9, 20); rim.position.set(0,-3,-3); scene.add(rim);
+  scene.add(new THREE.AmbientLight(0xfff2e4, 0.45));
+  const key = new THREE.PointLight(0xfff2e0, 2.0, 20); key.position.set(3,4.2,4); scene.add(key);
+  const fill = new THREE.PointLight(0xcf8f79, 1.2, 20); fill.position.set(-4,-1,3); scene.add(fill);
+  const rim = new THREE.PointLight(0xeccb9c, 1.3, 20); rim.position.set(-1,-3,-3.5); scene.add(rim);
+  const rim2 = new THREE.PointLight(0xffffff, 0.9, 20); rim2.position.set(2,2,-4); scene.add(rim2);
 
-  let material = new THREE.MeshPhysicalMaterial({ color: 0xd99a8f, roughness:0.15, metalness:0.05, clearcoat:1, clearcoatRoughness:0.08 });
-  let mesh;
+  let currentColor = 0xcf8f79;
+  let material = new THREE.MeshPhysicalMaterial({
+    color: currentColor, roughness:0.12, metalness:0.15,
+    clearcoat:1, clearcoatRoughness:0.06, envMap: envTex, envMapIntensity: 1.4
+  });
+  const skinMat = new THREE.MeshStandardMaterial({ color: 0xe3b08c, roughness:0.8, metalness:0, envMap: envTex, envMapIntensity:0.3 });
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  const skin = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 24), skinMat);
+  skin.scale.set(0.9, 1.15, 0.75);
+  skin.position.set(0, -0.62, -0.32);
+  group.add(skin);
+
+  let mesh, glitterPoints;
   const shapeScales = {
     round:  [0.62, 1.05, 0.32],
     square: [0.66, 1.02, 0.34],
     almond: [0.46, 1.3, 0.28]
   };
+  let curShape = 'round', curFinish = 'glossy';
+
+  function makeGlitter(){
+    if (glitterPoints) { group.remove(glitterPoints); glitterPoints.geometry.dispose(); }
+    const n = 90;
+    const pos = new Float32Array(n*3);
+    for (let i=0;i<n;i++){
+      const theta = Math.random()*Math.PI*2, phi = Math.acos(2*Math.random()-1);
+      const r = 0.98;
+      const s = shapeScales[curShape];
+      pos[i*3]   = s[0]*r*Math.sin(phi)*Math.cos(theta);
+      pos[i*3+1] = s[1]*r*Math.cos(phi)*0.5 + 0.1;
+      pos[i*3+2] = s[2]*r*Math.sin(phi)*Math.sin(theta)*0.6 + 0.12;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    const mat = new THREE.PointsMaterial({ color: 0xfff6e8, size: 0.035, transparent:true, opacity: curFinish==='glitter'?0.95:0, blending: THREE.AdditiveBlending, depthWrite:false });
+    glitterPoints = new THREE.Points(geo, mat);
+    group.add(glitterPoints);
+  }
+
   function buildShape(kind){
-    if (mesh) { scene.remove(mesh); mesh.geometry.dispose(); }
+    curShape = kind;
+    if (mesh) { group.remove(mesh); mesh.geometry.dispose(); }
     const geo = kind === 'square'
       ? new THREE.BoxGeometry(1,1,1,4,4,4)
       : new THREE.SphereGeometry(0.9, 48, 32);
     mesh = new THREE.Mesh(geo, material);
     const s = shapeScales[kind];
     mesh.scale.set(s[0], s[1], s[2]);
+    mesh.position.y = 0.05;
     group.add(mesh);
+    makeGlitter();
   }
-  const group = new THREE.Group();
-  scene.add(group);
   buildShape('round');
 
-  let dragging = false, lastX = 0, lastY = 0, rotY = 0.3, rotX = 0.1, autorotate = true;
+  let dragging = false, lastX = 0, lastY = 0, rotY = 0.35, rotX = 0.08, autorotate = true;
+  let camDist = 4.4;
   holder.addEventListener('pointerdown', e => { dragging = true; autorotate = false; lastX = e.clientX; lastY = e.clientY; });
   window.addEventListener('pointerup', () => dragging = false);
   window.addEventListener('pointermove', e => {
@@ -271,28 +431,47 @@
     rotX = Math.max(-0.6, Math.min(0.6, rotX));
     lastX = e.clientX; lastY = e.clientY;
   });
+  holder.addEventListener('wheel', e => {
+    e.preventDefault();
+    camDist += e.deltaY * 0.0025;
+    camDist = Math.max(2.6, Math.min(6.5, camDist));
+  }, { passive:false });
 
   function animate(){
     requestAnimationFrame(animate);
-    if (autorotate) rotY += 0.0025;
-    group.rotation.y += (rotY - group.rotation.y) * 0.15;
-    group.rotation.x += (rotX - group.rotation.x) * 0.15;
+    if (autorotate) rotY += 0.0022;
+    group.rotation.y += (rotY - group.rotation.y) * 0.14;
+    group.rotation.x += (rotX - group.rotation.x) * 0.14;
+    camera.position.z += (camDist - camera.position.z) * 0.12;
+    camera.lookAt(0,0,0);
+    if (glitterPoints) glitterPoints.rotation.y += 0.001;
     renderer.render(scene, camera);
   }
   window.addEventListener('resize', sizeRenderer);
   setTimeout(sizeRenderer, 50);
   animate();
 
-  const colors = ['#d99a8f','#e8c4a0','#a33232','#1a1a1a','#f0e9e4','#8a4a45'];
+  // ---------- colour swatches ----------
+  const colors = [
+    { hex:'#cf8f79', name:'Rose blush' },
+    { hex:'#eccb9c', name:'Champagne gold' },
+    { hex:'#a13a35', name:'Ruby red' },
+    { hex:'#17110f', name:'Onyx black' },
+    { hex:'#f2e8e0', name:'Milk white' },
+    { hex:'#7a4238', name:'Mauve' }
+  ];
   const colorRow = document.getElementById('colorRow');
+  let curColorName = colors[0].name, curColorHex = colors[0].hex;
   colors.forEach((c,i) => {
     const d = document.createElement('div');
     d.className = 'dot' + (i===0 ? ' active' : '');
-    d.style.background = c;
+    d.style.background = c.hex;
     d.addEventListener('click', () => {
-      material.color.set(c);
+      material.color.set(c.hex);
+      curColorHex = c.hex; curColorName = c.name;
       document.querySelectorAll('.dot').forEach(x=>x.classList.remove('active'));
       d.classList.add('active');
+      updateSummary();
     });
     colorRow.appendChild(d);
   });
@@ -302,15 +481,52 @@
       document.querySelectorAll('#shapeRow .opt-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       buildShape(btn.dataset.shape);
+      updateSummary();
     });
   });
   document.querySelectorAll('#finishRow .opt-btn').forEach(btn=>{
     btn.addEventListener('click', () => {
       document.querySelectorAll('#finishRow .opt-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      if (btn.dataset.finish === 'matte') { material.clearcoat = 0.1; material.roughness = 0.65; }
-      else { material.clearcoat = 1; material.roughness = 0.15; }
+      curFinish = btn.dataset.finish;
+      if (curFinish === 'matte') { material.clearcoat = 0.12; material.roughness = 0.6; material.metalness = 0.02; }
+      else if (curFinish === 'glitter') { material.clearcoat = 0.9; material.roughness = 0.2; material.metalness = 0.25; }
+      else { material.clearcoat = 1; material.roughness = 0.12; material.metalness = 0.15; }
+      if (glitterPoints) glitterPoints.material.opacity = curFinish === 'glitter' ? 0.95 : 0;
+      updateSummary();
     });
+  });
+
+  const summarySwirl = document.getElementById('summarySwirl');
+  const summaryLine1 = document.getElementById('summaryLine1');
+  const summaryLine2 = document.getElementById('summaryLine2');
+  function updateSummary(){
+    summarySwirl.style.background = 'radial-gradient(circle at 35% 30%, #fff8, transparent 40%), ' + curColorHex;
+    summaryLine1.textContent = curColorName;
+    const shapeLabel = curShape.charAt(0).toUpperCase() + curShape.slice(1);
+    const finishLabel = curFinish.charAt(0).toUpperCase() + curFinish.slice(1);
+    summaryLine2.textContent = shapeLabel + ' · ' + finishLabel;
+  }
+  updateSummary();
+
+  // ---------- artist selection ----------
+  const artists = [
+    { initials:'AN', name:'Amara N.', role:'Colour specialist', bg:'linear-gradient(135deg,#eccb9c,#cf8f79)' },
+    { initials:'PK', name:'Priya K.', role:'Nail art expert', bg:'linear-gradient(135deg,#e9bfa0,#8f5344)' },
+    { initials:'LM', name:'Lerato M.', role:'Studio lead', bg:'linear-gradient(135deg,#c9a25a,#7a4238)' }
+  ];
+  const artistRow = document.getElementById('artistRow');
+  let selectedArtist = null;
+  artists.forEach((a,i) => {
+    const el = document.createElement('div');
+    el.className = 'artist';
+    el.innerHTML = '<div class="av" style="background:' + a.bg + '">' + a.initials + '</div><div class="info"><div class="n">' + a.name + '</div><div class="r">' + a.role + '</div></div>';
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.artist').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel');
+      selectedArtist = a.name;
+    });
+    artistRow.appendChild(el);
   });
 
   // ---------- booking calendar ----------
@@ -336,7 +552,6 @@
         document.querySelectorAll('.cal-grid .day').forEach(x=>x.classList.remove('sel'));
         el.classList.add('sel');
         selectedDay = d;
-        updateConfirm();
       });
       calGrid.appendChild(el);
     }
@@ -350,22 +565,24 @@
       document.querySelectorAll('.slot').forEach(x=>x.classList.remove('sel'));
       s.classList.add('sel');
       selectedTime = s.dataset.t;
-      updateConfirm();
     });
   });
 
   const confirmMsg = document.getElementById('confirmMsg');
-  function updateConfirm(){
-    confirmMsg.classList.remove('show');
-  }
   document.getElementById('confirmBtn').addEventListener('click', () => {
-    if (selectedDay && selectedTime) {
-      confirmMsg.textContent = 'Preview only — in a real build this would send ' + viewDate.toLocaleString('en-US',{month:'long'}) + ' ' + selectedDay + ' at ' + selectedTime + ' to the studio.';
+    if (selectedArtist && selectedDay && selectedTime) {
+      confirmMsg.textContent = 'Preview only — a real build would send ' + selectedArtist + ' a request for ' + viewDate.toLocaleString('en-US',{month:'long'}) + ' ' + selectedDay + ' at ' + selectedTime + ', with your ' + curColorName.toLowerCase() + ' ' + curShape + ' design attached.';
     } else {
-      confirmMsg.textContent = 'Pick a date and a time first.';
+      confirmMsg.textContent = 'Choose an artist, a date, and a time first.';
     }
     confirmMsg.classList.add('show');
   });
+
+  // ---------- scroll reveal ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('on'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 })();
 </script>
 </body>
