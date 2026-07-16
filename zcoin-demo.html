@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZCoin Shari'ah Investments | Gold is Money (Concept Demo)</title>
+<meta name="description" content="Concept website demo for ZCoin Shari'ah Investments. Buy and sell Krugerrands the Halaal way. Built by Gio Global.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0A08;
+  --bg2:#121009;
+  --panel:#17140C;
+  --line:rgba(217,168,60,.14);
+  --line2:rgba(242,237,227,.08);
+  --text:#F2EDE3;
+  --muted:#A69D87;
+  --gold:#D9A83C;
+  --gold-bright:#F0C563;
+  --gold-deep:#8C6A1D;
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Outfit',sans-serif;
+  font-weight:400;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:var(--gold);color:#0B0A08}
+.mono{font-family:'IBM Plex Mono',monospace}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* ---------- NAV ---------- */
+nav{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);
+  width:min(1240px,calc(100% - 32px));
+  height:64px;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px 0 20px;
+  border-radius:999px;
+  border:1px solid transparent;
+  transition:background .35s ease,border-color .35s ease,backdrop-filter .35s ease;
+}
+nav.scrolled{
+  background:rgba(11,10,8,.72);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-color:var(--line);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+.nav-coin{
+  width:34px;height:34px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,var(--gold-bright),var(--gold) 45%,var(--gold-deep) 90%);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;color:#241B06;font-size:17px;
+  box-shadow:0 0 18px rgba(217,168,60,.35);
+}
+.nav-logo span{font-weight:600;letter-spacing:.02em;font-size:15px}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14.5px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  border-radius:999px;text-decoration:none;font-weight:600;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+  white-space:nowrap;
+}
+.btn:active{transform:scale(.98) translateY(1px)}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold-bright),var(--gold));
+  color:#241B06;padding:12px 24px;font-size:15px;
+  box-shadow:0 4px 24px rgba(217,168,60,.25);
+}
+.btn-gold:hover{box-shadow:0 6px 32px rgba(217,168,60,.45);transform:translateY(-2px)}
+.btn-ghost{
+  border:1px solid var(--line);color:var(--text);
+  padding:12px 24px;font-size:15px;background:rgba(242,237,227,.03);
+}
+.btn-ghost:hover{background:rgba(242,237,227,.07);transform:translateY(-2px)}
+.btn small{font-weight:500;opacity:.75}
+.wa-ic{width:17px;height:17px;flex:none}
+
+/* ---------- HERO ---------- */
+header{
+  min-height:100dvh;position:relative;
+  display:flex;align-items:center;
+  background:
+    radial-gradient(1100px 600px at 78% 42%,rgba(217,168,60,.10),transparent 60%),
+    radial-gradient(700px 500px at 15% 85%,rgba(217,168,60,.05),transparent 60%),
+    var(--bg);
+}
+.hero-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;
+  width:100%;padding-top:72px;
+}
+.hero-copy h1{
+  font-size:clamp(2.4rem,5vw,4.2rem);
+  line-height:1.04;letter-spacing:-.03em;font-weight:700;
+}
+.hero-copy h1 em{
+  font-style:italic;font-weight:700;
+  background:linear-gradient(100deg,var(--gold-bright),var(--gold) 60%,var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  line-height:1.1;padding-bottom:.08em;display:inline-block;
+}
+.hero-copy p{
+  margin:22px 0 32px;color:var(--muted);font-size:1.1rem;max-width:42ch;
+}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.hero-visual{position:relative;height:min(560px,60vh)}
+#coin-canvas{width:100%;height:100%;display:block;cursor:grab}
+#coin-canvas:active{cursor:grabbing}
+.coin-hint{
+  position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+  color:var(--muted);font-size:12px;letter-spacing:.08em;opacity:.7;
+}
+
+/* ---------- PRICE BAR ---------- */
+.price-bar{
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(217,168,60,.05),rgba(217,168,60,.02));
+}
+.price-inner{
+  display:flex;align-items:center;gap:0;flex-wrap:wrap;
+}
+.price-cell{
+  flex:1;min-width:200px;padding:22px 26px;
+  border-right:1px solid var(--line2);
+}
+.price-cell:last-child{border-right:none}
+.price-label{
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:8px;
+}
+.live-dot{
+  width:7px;height:7px;border-radius:50%;background:#59C96E;
+  animation:pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(89,201,110,.5)}50%{opacity:.6;box-shadow:0 0 0 5px rgba(89,201,110,0)}}
+.price-val{font-size:1.5rem;font-weight:600;margin-top:4px}
+.price-val .u{font-size:.85rem;color:var(--muted);font-weight:500}
+.price-note{font-size:12.5px;color:var(--muted);max-width:26ch}
+
+/* ---------- SECTIONS ---------- */
+section{padding:110px 0}
+.sec-head{max-width:640px;margin-bottom:56px}
+.sec-head h2{
+  font-size:clamp(1.9rem,3.4vw,2.8rem);line-height:1.1;
+  letter-spacing:-.02em;font-weight:700;
+}
+.sec-head p{color:var(--muted);margin-top:16px;font-size:1.05rem}
+
+/* Why gold bento */
+.bento{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto auto;gap:18px}
+.bento-cell{
+  border:1px solid var(--line2);border-radius:var(--radius);
+  padding:34px;position:relative;overflow:hidden;
+  background:var(--panel);
+}
+.bento-cell.tall{grid-row:span 2;display:flex;flex-direction:column;justify-content:flex-end;min-height:480px;
+  background:
+    radial-gradient(500px 340px at 70% 18%,rgba(217,168,60,.22),transparent 65%),
+    linear-gradient(180deg,#17140C, #0F0D08);
+}
+.bento-cell h3{font-size:1.35rem;font-weight:600;margin-bottom:10px;letter-spacing:-.01em}
+.bento-cell p{color:var(--muted);font-size:.98rem;max-width:46ch}
+.bento-chart{
+  position:absolute;inset:0;opacity:.55;pointer-events:none;
+}
+.bento-icon{
+  width:44px;height:44px;border-radius:12px;margin-bottom:18px;
+  background:rgba(217,168,60,.1);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);
+}
+.bento-icon svg{width:22px;height:22px}
+
+/* Buy grid */
+#buy{background:var(--bg2)}
+.coins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.coin-card{
+  border:1px solid var(--line2);border-radius:var(--radius);
+  background:var(--panel);padding:30px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:0;
+  transition:transform .25s ease,border-color .25s ease;
+}
+.coin-card:hover{transform:translateY(-5px);border-color:var(--line)}
+.coin-disc-wrap{align-self:center;height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.coin-disc{
+  border-radius:50%;position:relative;
+  background:radial-gradient(circle at 34% 28%,var(--gold-bright),var(--gold) 48%,var(--gold-deep) 92%);
+  box-shadow:0 14px 34px rgba(0,0,0,.5),inset 0 0 0 3px rgba(140,106,29,.65),inset 0 0 22px rgba(255,236,180,.35);
+  display:flex;align-items:center;justify-content:center;
+  color:#241B06;font-weight:800;
+}
+.coin-disc.silver{
+  background:radial-gradient(circle at 34% 28%,#F4F4F2,#C9C9C4 48%,#84837C 92%);
+  box-shadow:0 14px 34px rgba(0,0,0,.5),inset 0 0 0 3px rgba(110,110,104,.6),inset 0 0 22px rgba(255,255,255,.4);
+  color:#3A3A35;
+}
+.coin-card h3{font-size:1.12rem;font-weight:600}
+.coin-card .kind{color:var(--muted);font-size:.88rem;margin:4px 0 16px}
+.coin-card .cta-row{margin-top:auto;display:flex;align-items:center;gap:12px;width:100%}
+.btn-card{
+  background:rgba(217,168,60,.1);border:1px solid var(--line);color:var(--gold-bright);
+  padding:10px 18px;font-size:14px;
+}
+.btn-card:hover{background:rgba(217,168,60,.2)}
+.price-tag{font-size:.85rem;color:var(--muted)}
+.buy-note{
+  margin-top:26px;color:var(--muted);font-size:.92rem;max-width:70ch;
+}
+
+/* Sell panel */
+.sell-panel{
+  border:1px solid var(--line);border-radius:24px;overflow:hidden;
+  display:grid;grid-template-columns:1.1fr 1fr;
+  background:
+    radial-gradient(700px 420px at 12% 10%,rgba(217,168,60,.16),transparent 60%),
+    var(--panel);
+}
+.sell-left{padding:56px}
+.sell-left h2{font-size:clamp(1.8rem,3vw,2.5rem);letter-spacing:-.02em;line-height:1.12;font-weight:700}
+.sell-left p{color:var(--muted);margin:18px 0 30px;max-width:44ch}
+.sell-right{border-left:1px solid var(--line2);display:flex;flex-direction:column;justify-content:center}
+.sell-step{
+  padding:28px 40px;display:flex;gap:18px;align-items:flex-start;
+}
+.sell-step + .sell-step{border-top:1px solid var(--line2)}
+.step-n{
+  font-family:'IBM Plex Mono',monospace;color:var(--gold);font-size:.95rem;
+  border:1px solid var(--line);border-radius:999px;width:38px;height:38px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.sell-step h4{font-weight:600;font-size:1.02rem}
+.sell-step p{color:var(--muted);font-size:.92rem;margin-top:3px}
+
+/* Mehr */
+#mehr{
+  text-align:center;
+  background:
+    radial-gradient(800px 400px at 50% 110%,rgba(217,168,60,.12),transparent 65%),
+    var(--bg);
+}
+#mehr .inner{max-width:680px;margin:0 auto}
+#mehr h2{font-size:clamp(2rem,4vw,3.1rem);letter-spacing:-.02em;line-height:1.1;font-weight:700}
+#mehr h2 em{
+  font-style:italic;
+  background:linear-gradient(100deg,var(--gold-bright),var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  padding-bottom:.1em;display:inline-block;
+}
+#mehr p{color:var(--muted);margin:20px auto 32px;max-width:52ch}
+
+/* Testimonials */
+#reviews{background:var(--bg2)}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.review-card{
+  border:1px solid var(--line2);border-radius:var(--radius);
+  background:var(--panel);padding:30px;display:flex;flex-direction:column;gap:18px;
+}
+.review-card blockquote{font-size:1.02rem;line-height:1.55;font-weight:400}
+.review-card blockquote::before{content:"\201C";color:var(--gold);font-size:1.6rem;line-height:0;vertical-align:-8px;margin-right:2px}
+.review-who{display:flex;align-items:center;gap:12px;margin-top:auto}
+.review-av{
+  width:38px;height:38px;border-radius:50%;flex:none;
+  background:rgba(217,168,60,.12);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);
+}
+.review-av svg{width:18px;height:18px}
+.review-who span{font-size:.88rem;color:var(--muted)}
+.review-tag{
+  margin-top:34px;text-align:center;color:var(--muted);font-size:.92rem;
+}
+.review-tag b{color:var(--gold-bright);font-weight:600}
+
+/* About / trust */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.about-copy h2{font-size:clamp(1.9rem,3.2vw,2.7rem);letter-spacing:-.02em;line-height:1.12;font-weight:700;margin-bottom:20px}
+.about-copy p{color:var(--muted);margin-bottom:16px}
+.trust-tiles{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.trust-tile{
+  border:1px solid var(--line2);border-radius:var(--radius);background:var(--panel);
+  padding:26px;
+}
+.trust-tile .big{font-size:1.7rem;font-weight:700;color:var(--gold-bright);letter-spacing:-.01em}
+.trust-tile p{color:var(--muted);font-size:.9rem;margin-top:6px}
+
+/* Footer */
+footer{
+  border-top:1px solid var(--line);padding:56px 0 40px;background:var(--bg);
+}
+.foot-grid{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap;align-items:flex-start}
+.foot-brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.foot-links{display:flex;gap:22px}
+.foot-links a{color:var(--muted);text-decoration:none;font-size:14px}
+.foot-links a:hover{color:var(--text)}
+.demo-note{
+  margin-top:36px;padding:18px 22px;border:1px dashed var(--line);
+  border-radius:12px;color:var(--muted);font-size:.88rem;max-width:72ch;
+}
+.demo-note a{color:var(--gold-bright);text-decoration:none}
+.demo-badge{
+  position:fixed;bottom:18px;left:18px;z-index:90;
+  background:rgba(11,10,8,.85);backdrop-filter:blur(8px);
+  border:1px solid var(--line);border-radius:999px;
+  padding:8px 16px;font-size:12px;color:var(--muted);
+  text-decoration:none;
+}
+.demo-badge b{color:var(--gold-bright);font-weight:600}
+
+/* Reveal animation */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .live-dot{animation:none}
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width:900px){
+  .nav-links{display:none}
+  .hero-grid{grid-template-columns:1fr;gap:8px;padding-top:96px}
+  .hero-visual{height:340px;order:-1}
+  .bento{grid-template-columns:1fr}
+  .bento-cell.tall{min-height:360px;grid-row:auto}
+  .coins-grid{grid-template-columns:1fr;gap:14px}
+  .sell-panel{grid-template-columns:1fr}
+  .sell-left{padding:36px 28px}
+  .sell-right{border-left:none;border-top:1px solid var(--line2)}
+  .sell-step{padding:22px 28px}
+  .reviews-grid{grid-template-columns:1fr}
+  .about-grid{grid-template-columns:1fr;gap:36px}
+  section{padding:76px 0}
+}
+</style>
+</head>
+<body>
+
+<a class="demo-badge" href="https://gioglobal.store" target="_blank" rel="noopener">Concept demo by <b>Gio Global</b></a>
+
+<nav id="nav">
+  <a class="nav-logo" href="#top">
+    <span class="nav-coin">Z</span>
+    <span>ZCoin Shari'ah Investments</span>
+  </a>
+  <div class="nav-links">
+    <a href="#why">Why Gold</a>
+    <a href="#buy">Buy Coins</a>
+    <a href="#sell">Sell to Us</a>
+    <a href="#reviews">Reviews</a>
+  </div>
+  <a class="btn btn-gold" href="https://wa.me/27798131444?text=Salaam%2C%20I%27d%20like%20to%20chat%20about%20Krugerrands." target="_blank" rel="noopener">
+    <svg class="wa-ic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5s.8 1.9.8 2c.1.1.1.3 0 .5-.3.6-.7.9-.5 1.2.7 1.2 1.6 2 2.7 2.6.3.2.5.1.7-.1l.8-1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.1.1.5-.2 1.1z"/></svg>
+    WhatsApp Us
+  </a>
+</nav>
+
+<header id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1>Gold is money.<br>Everything else is <em>credit.</em></h1>
+      <p>Buy and sell Krugerrands the Halaal way. Interest free, fully yours, backed by our buy-back promise.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-gold" href="https://wa.me/27798131444?text=Salaam%2C%20I%27d%20like%20a%20price%20on%20Krugerrands%20today." target="_blank" rel="noopener">
+          <svg class="wa-ic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5s.8 1.9.8 2c.1.1.1.3 0 .5-.3.6-.7.9-.5 1.2.7 1.2 1.6 2 2.7 2.6.3.2.5.1.7-.1l.8-1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.1.1.5-.2 1.1z"/></svg>
+          Get Today's Price
+        </a>
+        <a class="btn btn-ghost" href="#buy">View the Coins</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <canvas id="coin-canvas"></canvas>
+      <div class="coin-hint mono">DRAG TO ROTATE</div>
+    </div>
+  </div>
+</header>
+
+<div class="price-bar" id="prices">
+  <div class="wrap price-inner">
+    <div class="price-cell">
+      <div class="price-label"><span class="live-dot"></span> Gold Spot / oz</div>
+      <div class="price-val mono" id="gold-zar">Loading…</div>
+      <div class="price-val mono" id="gold-usd" style="font-size:.95rem;color:var(--muted)"></div>
+    </div>
+    <div class="price-cell">
+      <div class="price-label"><span class="live-dot"></span> Silver Spot / oz</div>
+      <div class="price-val mono" id="silver-zar">Loading…</div>
+      <div class="price-val mono" id="silver-usd" style="font-size:.95rem;color:var(--muted)"></div>
+    </div>
+    <div class="price-cell">
+      <div class="price-label">USD / ZAR</div>
+      <div class="price-val mono" id="fx">…</div>
+      <div class="price-val mono" id="updated" style="font-size:.8rem;color:var(--muted)"></div>
+    </div>
+    <div class="price-cell">
+      <p class="price-note">Indicative spot prices. Final buy and sell rates are confirmed on WhatsApp.</p>
+    </div>
+  </div>
+</div>
+
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>When paper loses value, weight holds its ground.</h2>
+      <p>Paper currency is designed to lose value over time. Gold and silver have protected wealth for centuries, and they answer to no bank.</p>
+    </div>
+    <div class="bento">
+      <div class="bento-cell tall reveal">
+        <canvas class="bento-chart" id="gold-chart"></canvas>
+        <div style="position:relative">
+          <h3>The king of assets</h3>
+          <p>The Krugerrand is the most widely held bullion coin in the world, with over 60 million sold. It is the easiest way to own and trade real gold.</p>
+        </div>
+      </div>
+      <div class="bento-cell reveal">
+        <div class="bento-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v5c0 5-3.5 9.4-8 11-4.5-1.6-8-6-8-11V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <h3>Interest free. Shari'ah compliant.</h3>
+        <p>No riba, no hidden fees, no lock-in. Once you buy, the asset is 100% in your control. Zakaat on gold is simple to calculate and brings Barkhat to wealth.</p>
+      </div>
+      <div class="bento-cell reveal">
+        <div class="bento-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2c3 3.5 3 16.5 0 20-3-3.5-3-16.5 0-20z"/></svg>
+        </div>
+        <h3>Liquid anywhere on earth</h3>
+        <p>Gold sells easily in any country. Start small with silver Krugerrands and step up to gold as your savings grow. We buy back at the current rate, any day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="buy">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>The coins we deal in.</h2>
+      <p>Gold and silver prices move with the market, so every price is quoted live. Tap a coin and we answer on WhatsApp.</p>
+    </div>
+    <div class="coins-grid">
+      <div class="coin-card reveal">
+        <div class="coin-disc-wrap"><div class="coin-disc" style="width:130px;height:130px;font-size:26px">1oz</div></div>
+        <h3>1 oz Gold Krugerrand</h3>
+        <div class="kind">22ct fine gold · random year</div>
+        <div class="cta-row">
+          <a class="btn btn-card" href="https://wa.me/27798131444?text=Salaam%2C%20what%20is%20today%27s%20price%20on%20a%201oz%20Gold%20Krugerrand%3F" target="_blank" rel="noopener">Ask today's price</a>
+        </div>
+      </div>
+      <div class="coin-card reveal">
+        <div class="coin-disc-wrap"><div class="coin-disc" style="width:104px;height:104px;font-size:20px">½oz</div></div>
+        <h3>1/2 oz Gold Krugerrand</h3>
+        <div class="kind">22ct fine gold · random year</div>
+        <div class="cta-row">
+          <a class="btn btn-card" href="https://wa.me/27798131444?text=Salaam%2C%20what%20is%20today%27s%20price%20on%20a%20half%20ounce%20Gold%20Krugerrand%3F" target="_blank" rel="noopener">Ask today's price</a>
+        </div>
+      </div>
+      <div class="coin-card reveal">
+        <div class="coin-disc-wrap"><div class="coin-disc" style="width:86px;height:86px;font-size:17px">¼oz</div></div>
+        <h3>1/4 oz Gold Krugerrand</h3>
+        <div class="kind">22ct fine gold · random year</div>
+        <div class="cta-row">
+          <a class="btn btn-card" href="https://wa.me/27798131444?text=Salaam%2C%20what%20is%20today%27s%20price%20on%20a%20quarter%20ounce%20Gold%20Krugerrand%3F" target="_blank" rel="noopener">Ask today's price</a>
+        </div>
+      </div>
+      <div class="coin-card reveal">
+        <div class="coin-disc-wrap"><div class="coin-disc" style="width:70px;height:70px;font-size:13px">⅒oz</div></div>
+        <h3>1/10 oz Gold Krugerrand</h3>
+        <div class="kind">22ct fine gold · the starter coin</div>
+        <div class="cta-row">
+          <a class="btn btn-card" href="https://wa.me/27798131444?text=Salaam%2C%20what%20is%20today%27s%20price%20on%20a%201%2F10oz%20Gold%20Krugerrand%3F" target="_blank" rel="noopener">Ask today's price</a>
+        </div>
+      </div>
+      <div class="coin-card reveal">
+        <div class="coin-disc-wrap"><div class="coin-disc silver" style="width:130px;height:130px;font-size:26px">1oz</div></div>
+        <h3>1 oz Silver Krugerrand</h3>
+        <div class="kind">Fine silver · capsule included</div>
+        <div class="cta-row">
+          <a class="btn btn-card" href="https://wa.me/27798131444?text=Salaam%2C%20what%20is%20today%27s%20price%20on%20a%201oz%20Silver%20Krugerrand%3F" target="_blank" rel="noopener">Ask today's price</a>
+          <span class="price-tag">Start here</span>
+        </div>
+      </div>
+      <div class="coin-card reveal">
+        <div class="coin-disc-wrap"><div class="coin-disc" style="width:104px;height:104px;font-size:15px">دينار</div></div>
+        <h3>The Dinar &amp; Zahab range</h3>
+        <div class="kind">24ct gold · 1.06g to 25.5g</div>
+        <div class="cta-row">
+          <a class="btn btn-card" href="https://wa.me/27798131444?text=Salaam%2C%20I%27d%20like%20pricing%20on%20the%20Dinar%20and%20Zahab%20coins." target="_blank" rel="noopener">Ask today's price</a>
+        </div>
+      </div>
+    </div>
+    <p class="buy-note reveal">Prices move with market volatility and are locked at time of proof of payment. Collection in store or secure delivery arranged on WhatsApp.</p>
+  </div>
+</section>
+
+<section id="sell">
+  <div class="wrap">
+    <div class="sell-panel reveal">
+      <div class="sell-left">
+        <h2>Holding Krugerrands?<br>We buy them.</h2>
+        <p>Fair pricing, transparent process, and an offer you can trust, whether it is one coin or a collection.</p>
+        <a class="btn btn-gold" href="https://wa.me/27798131444?text=Salaam%2C%20I%20have%20Krugerrands%20to%20sell.%20Can%20I%20get%20an%20offer%3F" target="_blank" rel="noopener">
+          <svg class="wa-ic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5s.8 1.9.8 2c.1.1.1.3 0 .5-.3.6-.7.9-.5 1.2.7 1.2 1.6 2 2.7 2.6.3.2.5.1.7-.1l.8-1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.1.1.5-.2 1.1z"/></svg>
+          Get an Offer
+        </a>
+      </div>
+      <div class="sell-right">
+        <div class="sell-step">
+          <div class="step-n">1</div>
+          <div><h4>Message us on WhatsApp</h4><p>Tell us what you hold: gold or silver, size and year.</p></div>
+        </div>
+        <div class="sell-step">
+          <div class="step-n">2</div>
+          <div><h4>Get an offer at the current rate</h4><p>Priced against the live market, no games.</p></div>
+        </div>
+        <div class="sell-step">
+          <div class="step-n">3</div>
+          <div><h4>Conclude in store or by arrangement</h4><p>A smooth, private experience from start to finish.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mehr">
+  <div class="wrap inner">
+    <h2 class="reveal">The perfect <em>Mehr.</em></h2>
+    <p class="reveal">A gift that never loses its meaning or its value. Gold coins for weddings, newly-weds, new babies, and the ones you love.</p>
+    <a class="btn btn-ghost reveal" href="https://wa.me/27798131444?text=Salaam%2C%20I%27d%20like%20advice%20on%20gold%20coins%20for%20Mehr." target="_blank" rel="noopener">Ask about Mehr coins</a>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>What clients say.</h2>
+      <p>Real reviews sent to us on WhatsApp, shared with permission on our Instagram.</p>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <blockquote>Reliable, honest, accommodating. Excellent service, excellent opportunity. Probably the easiest investment deal I've made.</blockquote>
+        <div class="review-who">
+          <div class="review-av"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg></div>
+          <span>Verified client · WhatsApp review</span>
+        </div>
+      </div>
+      <div class="review-card reveal">
+        <blockquote>I didn't think buying Krugerrands would be this straightforward. No red tape, no fuss. An absolute pleasure.</blockquote>
+        <div class="review-who">
+          <div class="review-av"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg></div>
+          <span>Verified client · WhatsApp review</span>
+        </div>
+      </div>
+      <div class="review-card reveal">
+        <blockquote>Not my first time doing business with Mr Z. Always reliable, honest and trustworthy.</blockquote>
+        <div class="review-who">
+          <div class="review-av"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg></div>
+          <span>Repeat client · WhatsApp review</span>
+        </div>
+      </div>
+    </div>
+    <p class="review-tag reveal">Join the community stacking real wealth. <b>#StackWithZCoin</b></p>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about-grid">
+    <div class="about-copy reveal">
+      <h2>Built to free this Ummah from paper and debt.</h2>
+      <p>ZCoin exists to help our community earn, save and gift wealth the correct way: real assets, no interest, no hidden expenses, no waiting years to access your own savings.</p>
+      <p>Whether you are starting with one silver coin or stacking gold every month, you deal directly with us and the asset stays fully in your hands.</p>
+    </div>
+    <div class="trust-tiles">
+      <div class="trust-tile reveal"><div class="big">12.6K</div><p>Followers on our verified Instagram</p></div>
+      <div class="trust-tile reveal"><div class="big">60M+</div><p>Krugerrands sold worldwide since 1967</p></div>
+      <div class="trust-tile reveal"><div class="big">Buy-back</div><p>We buy back at the current rate, any day</p></div>
+      <div class="trust-tile reveal"><div class="big">Private</div><p>Your investment information stays safe with us</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">
+          <span class="nav-coin">Z</span>
+          <span style="font-weight:600">ZCoin Shari'ah Investments</span>
+        </div>
+        <p style="color:var(--muted);font-size:14px;max-width:34ch">Buy and sell gold and silver Krugerrands. WhatsApp 079 813 1444.</p>
+      </div>
+      <div class="foot-links">
+        <a href="https://www.instagram.com/zcoin_shariah_investments/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/ZCoin786/" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://wa.me/27798131444" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+    <div class="demo-note">
+      This is an unofficial concept demo created by <a href="https://gioglobal.store" target="_blank" rel="noopener">Gio Global</a> to show what a new ZCoin website could look like. It is not affiliated with or approved by ZCoin Shari'ah Investments. Spot prices shown are indicative market data, not ZCoin quotes.
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============ 3D KRUGERRAND COIN ============ */
+(function(){
+  const canvas = document.getElementById('coin-canvas');
+  if (!canvas || typeof THREE === 'undefined') return;
+  const wrap = canvas.parentElement;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 50);
+  camera.position.set(0, 0, 4.6);
+
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  function resize(){
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* --- coin face texture drawn on canvas --- */
+  function makeFace(back){
+    const s = 1024, c = document.createElement('canvas');
+    c.width = c.height = s;
+    const x = c.getContext('2d');
+    // base brushed gold
+    const g = x.createRadialGradient(s*0.38, s*0.34, s*0.05, s/2, s/2, s*0.55);
+    g.addColorStop(0, '#F6D87C');
+    g.addColorStop(0.45, '#DDAF45');
+    g.addColorStop(0.8, '#B9892B');
+    g.addColorStop(1, '#8C6A1D');
+    x.fillStyle = g;
+    x.fillRect(0, 0, s, s);
+    // subtle radial brush lines
+    x.save();
+    x.translate(s/2, s/2);
+    x.globalAlpha = 0.05;
+    for (let i = 0; i < 140; i++){
+      x.rotate(Math.PI * 2 / 140);
+      x.fillStyle = i % 2 ? '#FFF3C4' : '#7A5A14';
+      x.fillRect(s*0.08, -1, s*0.4, 2);
+    }
+    x.restore();
+    // outer ring
+    x.strokeStyle = 'rgba(120,90,20,.9)';
+    x.lineWidth = 14;
+    x.beginPath(); x.arc(s/2, s/2, s*0.465, 0, Math.PI*2); x.stroke();
+    x.strokeStyle = 'rgba(255,240,190,.5)';
+    x.lineWidth = 4;
+    x.beginPath(); x.arc(s/2, s/2, s*0.44, 0, Math.PI*2); x.stroke();
+    // ring text
+    x.save();
+    x.translate(s/2, s/2);
+    x.fillStyle = '#6B4E11';
+    x.font = '600 44px "Outfit", sans-serif';
+    const txt = back ? '  •  FYNGOUD 1 OZ FINE GOLD  •  KRUGERRAND' : '  •  ZCOIN SHARI\'AH INVESTMENTS  •  BUY & SELL KRUGERRANDS';
+    const chars = txt.split('');
+    const step = (Math.PI * 2) / chars.length;
+    chars.forEach(function(ch, i){
+      x.save();
+      x.rotate(i * step - Math.PI/2);
+      x.translate(0, -s*0.40);
+      x.fillText(ch, -12, 0);
+      x.restore();
+    });
+    x.restore();
+    // center emblem
+    x.fillStyle = '#6B4E11';
+    if (back){
+      // springbok-style silhouette suggestion: simple antelope shape kept abstract
+      x.font = '700 300px "Outfit", sans-serif';
+      x.textAlign = 'center';
+      x.textBaseline = 'middle';
+      x.fillText('1 oz', s/2, s/2 + 10);
+      x.font = '600 64px "Outfit", sans-serif';
+      x.fillText('FINE GOLD', s/2, s/2 + 190);
+    } else {
+      x.font = '800 460px "Outfit", sans-serif';
+      x.textAlign = 'center';
+      x.textBaseline = 'middle';
+      x.fillText('Z', s/2, s/2 + 16);
+    }
+    const tex = new THREE.CanvasTexture(c);
+    tex.anisotropy = 8;
+    return tex;
+  }
+
+  const coin = new THREE.Group();
+  const R = 1.42, H = 0.13;
+
+  const edgeMat = new THREE.MeshStandardMaterial({color:0xC79A32, metalness:1, roughness:0.38});
+  const faceMatF = new THREE.MeshStandardMaterial({map:makeFace(false), metalness:0.85, roughness:0.3});
+  const faceMatB = new THREE.MeshStandardMaterial({map:makeFace(true),  metalness:0.85, roughness:0.3});
+
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(R, R, H, 128, 1, false), [edgeMat, faceMatF, faceMatB]);
+  body.rotation.x = Math.PI / 2; // face the camera
+  coin.add(body);
+
+  // redraw faces once the display font has actually loaded
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      faceMatF.map = makeFace(false); faceMatF.needsUpdate = true;
+      faceMatB.map = makeFace(true);  faceMatB.needsUpdate = true;
+    });
+  }
+
+  // reeded edge: thin torus rings
+  const rim = new THREE.Mesh(
+    new THREE.TorusGeometry(R, H*0.52, 24, 160),
+    new THREE.MeshStandardMaterial({color:0xD9A83C, metalness:1, roughness:0.3})
+  );
+  coin.add(rim);
+
+  scene.add(coin);
+
+  /* gold dust particles */
+  const pGeo = new THREE.BufferGeometry();
+  const pCount = 90;
+  const pos = new Float32Array(pCount * 3);
+  for (let i = 0; i < pCount; i++){
+    const a = Math.random() * Math.PI * 2;
+    const r = 1.9 + Math.random() * 1.6;
+    pos[i*3]   = Math.cos(a) * r;
+    pos[i*3+1] = (Math.random() - 0.5) * 3.4;
+    pos[i*3+2] = Math.sin(a) * r * 0.6;
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const points = new THREE.Points(pGeo, new THREE.PointsMaterial({color:0xD9A83C, size:0.02, transparent:true, opacity:0.65}));
+  scene.add(points);
+
+  /* lights */
+  scene.add(new THREE.AmbientLight(0x3a3220, 1.1));
+  const key = new THREE.DirectionalLight(0xfff2cf, 2.1); key.position.set(3, 3, 4); scene.add(key);
+  const fill = new THREE.DirectionalLight(0xC9922F, 0.7); fill.position.set(-4, -2, 2); scene.add(fill);
+  const rimL = new THREE.PointLight(0xFFE9A8, 1.1, 20); rimL.position.set(0, 4, -3); scene.add(rimL);
+
+  /* interaction: drag + idle spin + scroll lean */
+  let targetRY = 0, targetRX = 0, dragging = false, lastX = 0, lastY = 0, idle = true;
+  function onDown(e){ dragging = true; idle = false; lastX = (e.touches?e.touches[0].clientX:e.clientX); lastY = (e.touches?e.touches[0].clientY:e.clientY); }
+  function onMove(e){
+    if (!dragging) return;
+    const cx = (e.touches?e.touches[0].clientX:e.clientX), cy = (e.touches?e.touches[0].clientY:e.clientY);
+    targetRY += (cx - lastX) * 0.011;
+    targetRX += (cy - lastY) * 0.007;
+    targetRX = Math.max(-0.9, Math.min(0.9, targetRX));
+    lastX = cx; lastY = cy;
+  }
+  function onUp(){ dragging = false; setTimeout(function(){ idle = true; }, 2600); }
+  canvas.addEventListener('mousedown', onDown);
+  canvas.addEventListener('touchstart', onDown, {passive:true});
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, {passive:true});
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('touchend', onUp);
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let t = 0;
+  function tick(){
+    requestAnimationFrame(tick);
+    t += 0.016;
+    if (idle && !reduce) targetRY += 0.0038;
+    const lean = Math.min(window.scrollY / window.innerHeight, 1);
+    coin.rotation.y += (targetRY - coin.rotation.y) * 0.08;
+    coin.rotation.x += ((targetRX + lean * 0.55) - coin.rotation.x) * 0.08;
+    coin.position.y = Math.sin(t * 0.8) * 0.05;
+    points.rotation.y = t * 0.03;
+    renderer.render(scene, camera);
+  }
+  tick();
+})();
+
+/* ============ LIVE SPOT PRICES ============ */
+(function(){
+  const fmtR = function(n){ return 'R ' + n.toLocaleString('en-ZA', {maximumFractionDigits:0}); };
+  const fmtU = function(n){ return '$' + n.toLocaleString('en-US', {maximumFractionDigits:0}); };
+  function fail(){
+    ['gold-zar','silver-zar'].forEach(function(id){ document.getElementById(id).textContent = 'Feed offline'; });
+    document.getElementById('fx').textContent = '--';
+    document.getElementById('updated').textContent = 'Live feed unavailable right now';
+  }
+  Promise.all([
+    fetch('https://api.gold-api.com/price/XAU').then(function(r){ return r.json(); }),
+    fetch('https://api.gold-api.com/price/XAG').then(function(r){ return r.json(); }),
+    fetch('https://open.er-api.com/v6/latest/USD').then(function(r){ return r.json(); })
+  ]).then(function(res){
+    const xau = res[0].price, xag = res[1].price, zar = res[2].rates && res[2].rates.ZAR;
+    if (!xau || !xag || !zar) return fail();
+    document.getElementById('gold-usd').textContent = fmtU(xau) + ' /oz';
+    document.getElementById('silver-usd').textContent = '$' + xag.toLocaleString('en-US',{maximumFractionDigits:2}) + ' /oz';
+    document.getElementById('gold-zar').textContent = fmtR(xau * zar);
+    document.getElementById('silver-zar').textContent = fmtR(xag * zar);
+    document.getElementById('fx').textContent = zar.toFixed(2);
+    const now = new Date();
+    document.getElementById('updated').textContent = 'Updated ' + now.toLocaleTimeString('en-ZA', {hour:'2-digit', minute:'2-digit'});
+  }).catch(fail);
+})();
+
+/* ============ GOLD LINE ART (bento, decorative trend line) ============ */
+(function(){
+  const c = document.getElementById('gold-chart');
+  if (!c) return;
+  function draw(){
+    const w = c.clientWidth || c.parentElement.clientWidth;
+    const h = c.clientHeight || c.parentElement.clientHeight;
+    c.width = w * 2; c.height = h * 2;
+    const x = c.getContext('2d');
+    x.scale(2, 2);
+    x.clearRect(0, 0, w, h);
+    // smooth ascending curve, purely illustrative
+    const pts = [];
+    const n = 60;
+    for (let i = 0; i <= n; i++){
+      const p = i / n;
+      const y = h * 0.78 - p * h * 0.52 + Math.sin(p * 9.5) * h * 0.045 * (1 - p * 0.4);
+      pts.push([p * w, y]);
+    }
+    const grad = x.createLinearGradient(0, 0, w, 0);
+    grad.addColorStop(0, 'rgba(217,168,60,.15)');
+    grad.addColorStop(1, 'rgba(240,197,99,.9)');
+    x.strokeStyle = grad;
+    x.lineWidth = 2.4;
+    x.beginPath();
+    pts.forEach(function(p, i){ i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1]); });
+    x.stroke();
+    // area fill
+    const fillG = x.createLinearGradient(0, 0, 0, h);
+    fillG.addColorStop(0, 'rgba(217,168,60,.16)');
+    fillG.addColorStop(1, 'rgba(217,168,60,0)');
+    x.lineTo(w, h); x.lineTo(0, h); x.closePath();
+    x.fillStyle = fillG;
+    x.fill();
+  }
+  draw();
+  window.addEventListener('resize', draw);
+})();
+
+/* ============ NAV + REVEALS ============ */
+(function(){
+  const nav = document.getElementById('nav');
+  let ticking = false;
+  function onFrame(){
+    nav.classList.toggle('scrolled', window.scrollY > 30);
+    ticking = false;
+  }
+  document.addEventListener('scroll', function(){
+    if (!ticking){ requestAnimationFrame(onFrame); ticking = true; }
+  }, {passive:true});
+  onFrame();
+
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold:0.18});
+  document.querySelectorAll('.reveal').forEach(function(el, i){
+    el.style.transitionDelay = (i % 3) * 70 + 'ms';
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>
