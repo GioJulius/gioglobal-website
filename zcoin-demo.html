@@ -637,6 +637,8 @@ footer{
     const s = 1024, c = document.createElement('canvas');
     c.width = c.height = s;
     const x = c.getContext('2d');
+    // compensate cylinder-cap UV orientation (face showed rotated 90deg)
+    x.translate(s/2, s/2); x.rotate(-Math.PI/2); x.translate(-s/2, -s/2);
     // base brushed gold
     const g = x.createRadialGradient(s*0.38, s*0.34, s*0.05, s/2, s/2, s*0.55);
     g.addColorStop(0, '#F6D87C');
